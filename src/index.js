@@ -1,15 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-import { Provider } from 'react-redux';
-import { store } from './redux/store';
-// import './index.css';
+import ReactDOM from "react-dom/client";
+import { Provider as ReduxProvider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import { persistor, store } from "./redux/store";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "../src/App.jsx";
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <ReduxProvider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <BrowserRouter basename="/money-guard">
+        <App />
+      </BrowserRouter>
+    </PersistGate>
+  </ReduxProvider>
 );
