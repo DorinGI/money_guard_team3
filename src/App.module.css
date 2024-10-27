@@ -15,3 +15,20 @@
   justify-content: flex-end;
   width: 100%;
 }
+
+.addButton {
+  position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color:rgb(92, 92, 4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+}
+.addButton:hover{
+  background-color: bisque;
+}

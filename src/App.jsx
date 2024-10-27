@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 // import UserMenu from './components/UserMenu';
 import styles from './App.module.css';
 
+import Home from './home/Home';
+
 const App = () => {
   // const dispatch = useDispatch();
   // const token = useSelector(state => state.auth.token);
@@ -17,6 +19,7 @@ const App = () => {
   return (
     <div className={styles.appContainer}>
       <h1>Money Guard</h1>
+      <Home></Home>
       {/* <header className={styles.header}>{token && <UserMenu />}</header>
        <Routes>
          <Route path="/login" element={<Login />} />
