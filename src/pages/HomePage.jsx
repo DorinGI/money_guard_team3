@@ -1,34 +1,16 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import TransactionsList from './common/components/TransactionsList';
+import ButtonAddTransactions from './common/components/ButtonAddTransactions';
 import styles from './HomePage.module.css';
 
-const HomePage = ({ data }) => {
+const HomePage = () => {
+  const transactions = useSelector(state => state.transactions);
   return (
-    <div className={styles.tableContainer}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Category</th>
-            <th>Comment</th>
-            <th>Sum</th>
-          </tr>
-        </thead>
-        {/* <tbody>
-          {data.map((item, index) => {
-            <tr key={index}>
-              <td>{entry.date}</td>
-              <td>{entry.type}</td>
-              <td>{entry.category}</td>
-              <td>{entry.comment}</td>
-              <td>{entry.sum}</td>
-            </tr>;
-          })}
-        </tbody>*/}
-      </table>
-      <button className={styles.addButton}>+</button>
+    <div className={styles.homePage}>
+      <TransactionsList transactions={transactions} />
+      <ButtonAddTransactions />
     </div>
   );
 };
-
 export default HomePage;
