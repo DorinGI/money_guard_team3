@@ -4,6 +4,8 @@
   max-width: 1280px;
   padding: 0px 16px;
   background: #623f8b;
+  margin: auto;
+  height: 100%;
 }
 
 .header {
