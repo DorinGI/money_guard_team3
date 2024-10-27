@@ -7,7 +7,6 @@ import StatisticsPage from './pages/StatisticsPage';
 // import Register from './pages/Register';
 // import Login from './pages/Login';
 import Header from './pages/common/components/Header';
-import MenuCurencyPage from './pages/MenuCurencyPage';
 import styles from './App.module.css';
 
 const App = () => {
@@ -21,7 +20,7 @@ const App = () => {
   return (
     <>
       <header className={styles.header}>{<Header />}</header>
-      <div style={{ display: 'flex' }}>
+      <div className={styles.mainContainer}>
         <Sidebar />
         <div style={{ flex: 1, padding: '20px' }}>
           <Routes>

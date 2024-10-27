@@ -2,19 +2,29 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Balance from './Balance';
 import CurrencyChart from './CurencyChart';
+import sprite from '../../../images/icons/sprite.svg';
 import styles from './Sidebar.module.css';
 
 function Sidebar() {
   return (
-    <div style={{ width: '250px', background: '#f4f4f4', padding: '20px' }}>
-      <h2>Dashboard</h2>
+    <div className={styles.sidebarContainer}>
       <nav>
         <ul>
-          <li>
-            <Link to="/">Home</Link>
+          <li className={styles.navHome}>
+            <Link to="/" aria-current="page">
+              <svg>
+                <use href={`${sprite}#icon-home`} />
+              </svg>
+              <p>Home</p>
+            </Link>
           </li>
-          <li>
-            <Link to="/statistics">Statistics</Link>
+          <li className={styles.navStatistics}>
+            <Link to="/statistics">
+              <svg>
+                <use href={`${sprite}#icon-statistics`} />
+              </svg>
+              <p>Statistics</p>
+            </Link>
           </li>
         </ul>
       </nav>

@@ -1,0 +1,30 @@
+/*pentru mobil*/
+.balanceContainer {
+  height: 80px;
+  box-shadow: 1px 9px 15px 0 rgba(0, 0, 0, 0.2);
+  background: rgba(82, 59, 126, 0.6);
+}
+.balanceContainer h3 {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--white-40);
+  margin-bottom: 12px;
+  margin-left: 56px;
+}
+.balanceContainer p {
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--white);
+  margin: auto;
+  margin-left: 56px;
+}
+/*Stiluri pentru tableta*/
+@media screen and (min-width: 768px) {
+}
+
+/* Stiluri pentru desktop */
+@media screen and (min-width: 1280px) {
+}

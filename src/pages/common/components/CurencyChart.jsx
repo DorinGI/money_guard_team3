@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import styles from './CurencyChart.module.css';
 
 const data = [
   { name: 'Jan', value: 400 },
@@ -19,7 +20,7 @@ const data = [
 
 function CurrencyChart() {
   return (
-    <div style={{ marginTop: '20px' }}>
+    <div className={styles.chartContainer}>
       <h3>Currency</h3>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data}>
