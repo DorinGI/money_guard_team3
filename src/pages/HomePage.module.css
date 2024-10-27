@@ -2,8 +2,7 @@
   position: relative;
   padding: 16px;
   border-radius: 8px;
-  background:blue ;
-
+  background: blue;
 }
 
 .table {
@@ -19,7 +18,7 @@
 }
 
 .table th {
-  background-color:#523B7E;
+  background-color: #523b7e;
   color: white;
 }
 

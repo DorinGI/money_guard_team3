@@ -1,24 +1,34 @@
 import React from 'react';
+import styles from './HomePage.module.css';
 
-function HomePage() {
-  const expenses = [
-    { id: 1, name: 'Rent', amount: -500 },
-    { id: 2, name: 'Groceries', amount: -100 },
-    { id: 3, name: 'Salary', amount: 1500 },
-  ];
-
+const HomePage = ({ data }) => {
   return (
-    <div>
-      <h1>Expenses & Incomes</h1>
-      <ul>
-        {expenses.map(expense => (
-          <li key={expense.id}>
-            {expense.name}: ${expense.amount}
-          </li>
-        ))}
-      </ul>
+    <div className={styles.tableContainer}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Comment</th>
+            <th>Sum</th>
+          </tr>
+        </thead>
+        {/* <tbody>
+          {data.map((item, index) => {
+            <tr key={index}>
+              <td>{entry.date}</td>
+              <td>{entry.type}</td>
+              <td>{entry.category}</td>
+              <td>{entry.comment}</td>
+              <td>{entry.sum}</td>
+            </tr>;
+          })}
+        </tbody>*/}
+      </table>
+      <button className={styles.addButton}>+</button>
     </div>
   );
-}
+};
 
 export default HomePage;
