@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { Routes, Route } from 'react-router-dom';
+import Sidebar from './pages/common/components/Sidebar';
+import HomePage from './pages/HomePage';
+import StatisticsPage from './pages/StatisticsPage';
+// import { useSelector, useDispatch } from 'react-redux';
 // import Register from './pages/Register';
 // import Login from './pages/Login';
-// import UserMenu from './components/UserMenu';
+import Header from './pages/common/components/Header';
+import MenuCurencyPage from './pages/MenuCurencyPage';
 import styles from './App.module.css';
 
 const App = () => {
@@ -15,20 +19,36 @@ const App = () => {
   //   }
   // }, [dispatch, token]);
   return (
-    <div className={styles.appContainer}>
-      <h1>Money Guard</h1>
-      {/* <header className={styles.header}>{token && <UserMenu />}</header>
-       <Routes>
-         <Route path="/login" element={<Login />} />
-         <Route path="/register" element={<Register />} />
-         <Route path="*" element={<Login />} /> */}{' '}
-      {/* <Route
+    <>
+      <header className={styles.header}>{<Header />}</header>
+      <div style={{ display: 'flex' }}>
+        <Sidebar />
+        <div style={{ flex: 1, padding: '20px' }}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+          </Routes>
+        </div>
+      </div>
+    </>
+  );
+  // return (
+  //   <div className={styles.appContainer}>
+  //     <h1>Money Guard</h1>
+  //     <header className={styles.header}>{token && <UserMenu />}</header>
+  //     <header className={styles.header}>{<Header />}</header>
+  //     <Routes>
+  //       <Route path="/login" element={<Login />} />
+  //       <Route path="/register" element={<Register />} />
+  //       <Route path="*" element={<Login />} />
+  //       <Route
   //         path="/contacts"
   //         element={token ? <Contacts /> : <Navigate to="/login" replace />}
-  //       /> */}
-      {/* //     </Routes> */}
-    </div>
-  );
+  //       />
+  //       <Route path="/home" element={<MenuCurencyPage />} />
+  //     </Routes>
+  //   </div>
+  // );
 };
 
 export default App;

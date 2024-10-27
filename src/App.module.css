@@ -1,3 +1,4 @@
+/*pentru mobil*/
 .appContainer {
   display: flex;
   flex-direction: column;
@@ -10,8 +11,25 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  justify-content: flex-end;
   width: 100%;
+  min-height: 60px;
+  box-shadow: 0 4px 40px 0 rgba(0, 0, 0, 0.25),
+    inset 0 -3px 2px 0 rgba(0, 0, 0, 0.1);
+  background: linear-gradient(276deg, #2e1746 3.19%, #2e225f 100%);
+}
+
+/*Stiluri pentru tableta*/
+@media screen and (min-width: 768px) {
+  .header {
+    /* width: 768px; */
+    height: 80px;
+  }
+}
+
+/* Stiluri pentru desktop */
+@media screen and (min-width: 1280px) {
+  .header {
+    /* width: 1280px; */
+    height: 80px;
+  }
 }
