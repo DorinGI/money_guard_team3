@@ -1,0 +1,28 @@
+.tableContainer {
+  position: relative;
+  padding: 16px;
+  border-radius: 8px;
+  background:blue ;
+
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.table th {
+  background-color:#523B7E;
+  color: white;
+}
+
+.table td {
+  color: #333;
+}
