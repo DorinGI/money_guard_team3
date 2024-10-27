@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 // import { logout } from '../redux/authSlice';
 import sprite from '../../../images/icons/sprite.svg';
@@ -15,12 +16,12 @@ const Header = () => {
   return (
     <div className={styles.headerContainerOutside}>
       <div className={styles.headerContainer}>
-        <a href={`${sprite}#icon-logo`}>
+        <Link to="/">
           <svg width="17" height="17">
-            <use href={`${sprite}#icon-logo`}></use>
+            <use href={`${sprite}#icon-logo`} />
           </svg>
           <p>Money Guard</p>
-        </a>
+        </Link>
         <div className={styles.userContainer}>
           <span className={styles.userInfo}>Username</span>
           {/* <span className={styles.userInfo}>{user?.name}</span>
