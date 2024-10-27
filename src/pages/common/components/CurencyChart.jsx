@@ -11,24 +11,46 @@ import {
 import styles from './CurencyChart.module.css';
 
 const data = [
-  { name: 'Jan', value: 400 },
-  { name: 'Feb', value: 300 },
-  { name: 'Mar', value: 200 },
-  { name: 'Apr', value: 278 },
-  { name: 'May', value: 189 },
+  {
+    currency: 'EUR',
+    purchase: parseFloat('44,95'.replace(',', '.')),
+    sale: parseFloat('46,49'.replace(',', '.')),
+  },
+  {
+    currency: 'USD',
+    purchase: parseFloat('38,95'.replace(',', '.')),
+    sale: parseFloat('41,49'.replace(',', '.')),
+  },
 ];
 
 function CurrencyChart() {
   return (
     <div className={styles.chartContainer}>
-      <h3>Currency</h3>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Currency</th>
+            <th>Purchase</th>
+            <th>Sale</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr key={index}>
+              <td>{item.currency}</td>
+              <td>{item.purchase}</td>
+              <td>{item.sale}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="purchase" />
           <YAxis />
           <Tooltip />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
+          <Line type="monotone" dataKey="purchase" stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
     </div>
