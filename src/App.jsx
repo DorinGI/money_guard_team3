@@ -24,7 +24,7 @@ const App = () => {
         <Sidebar />
         <div style={{ flex: 1, padding: '20px' }}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/statistics" element={<StatisticsPage />} />
           </Routes>
         </div>

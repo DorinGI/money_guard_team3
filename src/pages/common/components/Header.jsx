@@ -16,7 +16,7 @@ const Header = () => {
   return (
     <div className={styles.headerContainerOutside}>
       <div className={styles.headerContainer}>
-        <Link to="/">
+        <Link to="/home">
           <svg width="17" height="17">
             <use href={`${sprite}#icon-logo`} />
           </svg>
