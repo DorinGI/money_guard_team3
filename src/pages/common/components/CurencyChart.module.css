@@ -1,12 +1,17 @@
-.chartContainer {
+.curencyContainer {
+  margin: 32px 0px 14px 0px;
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  height: 380px;
-  backdrop-filter: blur(100px);
-  box-shadow: 0 4px 60px 0 rgba(0, 0, 0, 0.25);
+  /* width: calc(100% + 16px); */
+  /* margin-left: -16px; */
+  color: rgb(251, 251, 251);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 60px 0px;
+  overflow: clip;
 }
-.chartContainer th {
+/* .chartContainer th {
   font-family: var(--font-family);
   font-weight: 600;
   font-size: 16px;
@@ -19,11 +24,51 @@
   font-weight: 400;
   font-size: 16px;
   color: var(--white);
+} */
+.tableContainer {
+  max-height: 170px;
+  width: 100%;
+  margin-bottom: 24px;
 }
-.table {
-  width: 70%;
-  max-width: 600px;
-  margin: 20px 0;
-  border-collapse: collapse;
+.tableHead {
+  background: rgba(103, 77, 166, 0.7);
+}
+.tableHead ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 55px;
+  padding: 19px 0px;
+  margin: 0px auto 24px 58px;
+  width: 480px;
+}
+.tableHead li {
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--white);
   text-align: center;
+}
+.tableBody {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+  margin-left: 55px;
+}
+.tableBody ul {
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
+  margin-left: 40px;
+}
+.tableBody li {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--white);
+  display: inline-block;
+  line-height: 1.5;
+  text-align: center;
+  width: 62px;
 }

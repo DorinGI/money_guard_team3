@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import Balance from './Balance';
 import CurrencyChart from './CurencyChart';
 import sprite from '../../../images/icons/sprite.svg';
@@ -11,20 +11,31 @@ function Sidebar() {
       <nav>
         <ul>
           <li className={styles.navHome}>
-            <Link to="/home" aria-current="page">
+            <NavLink
+              to="/home"
+              aria-current="page"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLinkActive}` : styles.navLinkInaktive
+              }
+            >
               <svg>
                 <use href={`${sprite}#icon-home`} />
               </svg>
               <p>Home</p>
-            </Link>
+            </NavLink>
           </li>
           <li className={styles.navStatistics}>
-            <Link to="/statistics">
+            <NavLink
+              to="/statistics"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLinkActive}` : styles.navLinkInaktive
+              }
+            >
               <svg>
                 <use href={`${sprite}#icon-statistics`} />
               </svg>
               <p>Statistics</p>
-            </Link>
+            </NavLink>
           </li>
         </ul>
       </nav>

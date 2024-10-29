@@ -19,14 +19,16 @@ const App = () => {
   // }, [dispatch, token]);
   return (
     <>
-      <header className={styles.header}>{<Header />}</header>
-      <div className={styles.mainContainer}>
-        <Sidebar />
-        <div style={{ flex: 1, padding: '20px' }}>
-          <Routes>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/statistics" element={<StatisticsPage />} />
-          </Routes>
+      <div className={styles.section}>
+        <header className={styles.header}>{<Header />}</header>
+        <div className={styles.mainContainer}>
+          <Sidebar />
+          <div style={{ flex: 1, padding: '20px' }}>
+            <Routes>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/statistics" element={<StatisticsPage />} />
+            </Routes>
+          </div>
         </div>
       </div>
     </>

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import getExchangeRate from '../service/CurencyRateService';
 import {
   LineChart,
   Line,
@@ -24,9 +25,24 @@ const data = [
 ];
 
 function CurrencyChart() {
+  const [exchangeRate, setExchangeRate] = useState(null);
+
+  useEffect(() => {
+    // Funcția asincronă pentru a obține cursul valutar
+    async function fetchExchangeRate() {
+      const data = await getExchangeRate();
+      setExchangeRate(data);
+    }
+
+    fetchExchangeRate();
+  }, []); // Dependențele goale [] asigură că efectul rulează doar la montare
+
+  if (!exchangeRate) {
+    return <div>Loading...</div>;
+  }
   return (
-    <div className={styles.chartContainer}>
-      <table className={styles.table}>
+    <div className={styles.curencyContainer}>
+      {/* <table className={styles.table}>
         <thead>
           <tr>
             <th>Currency</th>
@@ -43,7 +59,25 @@ function CurrencyChart() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
+      <div className={styles.tableContainer}>
+        <div className={styles.tableHead}>
+          <ul>
+            <li>Currency</li>
+            <li>Purchase</li>
+            <li>Sale</li>
+          </ul>
+        </div>
+        <div className={styles.tableBody}>
+          {data.map((item, index) => (
+            <ul key={index}>
+              <li>{item.currency}</li>
+              <li>{item.purchase}</li>
+              <li>{item.sale}</li>
+            </ul>
+          ))}
+        </div>
+      </div>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
