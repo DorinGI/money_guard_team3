@@ -11,7 +11,7 @@ function Sidebar() {
       <nav>
         <ul>
           <li className={styles.navHome}>
-            <Link to="/" aria-current="page">
+            <Link to="/home" aria-current="page">
               <svg>
                 <use href={`${sprite}#icon-home`} />
               </svg>
