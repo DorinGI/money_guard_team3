@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './pages/common/components/Sidebar';
-import HomePage from './pages/HomePage';
-import StatisticsPage from './pages/StatisticsPage';
+//import HomePage from './pages/HomePage';
+//import StatisticsPage from './pages/StatisticsPage';
 // import { useSelector, useDispatch } from 'react-redux';
 // import Register from './pages/Register';
 // import Login from './pages/Login';
-import Header from './pages/common/components/Header';
+//import Header from './pages/common/components/Header';
 import styles from './App.module.css';
 
 const App = () => {
