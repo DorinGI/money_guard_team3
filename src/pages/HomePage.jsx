@@ -1,16 +1,21 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import TransactionsList from './common/components/TransactionsList';
-import ButtonAddTransactions from './common/components/ButtonAddTransactions';
-import styles from './HomePage.module.css';
-
-const HomePage = () => {
-  const transactions = useSelector(state => state.transactions);
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getTransactions } from '../redux/transactions/operations';
+import { getTransactionsCategories } from './StatisticsPage';
+import TransactionList from './common/components/TransactionsList';
+import AddButton from './common/components/AddButton/AddButton';
+function Home() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getTransactions());
+    dispatch(getTransactionsCategories());
+  }, [dispatch]);
   return (
-    <div className={styles.homePage}>
-      <TransactionsList transactions={transactions} />
-      <ButtonAddTransactions />
-    </div>
+    <>
+      <TransactionList />
+      <AddButton></AddButton>
+    </>
   );
-};
-export default HomePage;
+}
+
+export default Home;
