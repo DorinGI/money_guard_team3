@@ -7,6 +7,7 @@ const AddButton = () => {
   const dispatch = useDispatch();
 
   const handleClick = () => {
+    dispatch(openAddModal());
   };
 
   return (
