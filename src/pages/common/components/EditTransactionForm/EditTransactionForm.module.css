@@ -1,3 +1,4 @@
+@import '../../../../sass/_common.scss';
 .type {
   display: flex;
   justify-content: center;

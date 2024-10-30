@@ -1,3 +1,5 @@
+@import '../../../sass/_common.scss';
+
 .transactionCard {
   transition: background-color 0.3s ease;
 }
@@ -9,8 +11,8 @@ td {
   padding: 10px;
 }
 
-.deleteButton{
-  background: linear-gradient(to bottom, #FFC727 0%, #9E40BA 61%, #7000FF 91%);
+.deleteButton {
+  background: linear-gradient(to bottom, #ffc727 0%, #9e40ba 61%, #7000ff 91%);
   color: white;
   border: none;
   border-radius: 5px;
@@ -20,5 +22,5 @@ td {
 }
 
 .deleteButton:hover {
-  background-color: #E5D3FF;
+  background-color: #e5d3ff;
 }
