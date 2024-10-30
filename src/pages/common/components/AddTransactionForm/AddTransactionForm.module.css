@@ -1,0 +1,39 @@
+.form {
+  display: flex;
+  flex-direction: column; /* Stack inputs vertically */
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column; /* Stack inputs vertically */
+  margin-bottom: 20px; /* Space between input fields */
+}
+
+input,
+select {
+  padding: 10px; /* Padding for inputs */
+  width: 100%; /* Full width */
+  border: 1px solid #ccc; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+}
+
+.error {
+  color: red; /* Error message color */
+  font-size: 12px; /* Error message font size */
+}
+
+/* Button styles */
+button {
+  padding: 10px 20px; /* Button padding */
+  background-color: #6200ea; /* Button background color */
+  color: white; /* Button text color */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+}
+
+/* Button hover effect */
+button:hover {
+  background-color: #3700b3; /* Darker shade on hover */
+}
