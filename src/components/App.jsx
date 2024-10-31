@@ -12,9 +12,6 @@ import { selectIsLoading } from '../reduxConfig/global/selectors';
 import LoginPage from '../pages/LoginPage';
 import RegistrationPage from '../pages/RegistrationPage';
 import DashboardPage from '../pages/DashboardPage/DashboardPage';
-import HomePage from '../pages/HomePage/HomePage';
-import StatisticsPage from '../pages/StatisticPage/StatisticsPage';
-import CurrencyPage from '../pages/CurrencyPage';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -26,16 +23,6 @@ export const App = () => {
     dispatch(refreshUser());
   }, [dispatch]);
 
-/*  const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
-  const CurrencyPage = lazy(() => import('../pages/CurrencyPage'));
-  const DashboardPage = lazy(() =>
-    import('../pages/DashboardPage/DashboardPage')
-  );
-  const LoginPage = lazy(() => import('../pages/LoginPage'));
-  const RegistrationPage = lazy(() => import('../pages/RegistrationPage'));
-  const StatisticsPage = lazy(() =>
-    import('../pages/StatisticPage/StatisticsPage')
-  );*/
   return isRefreshing ? (
       <Loader visible={isLoading} />
   ) : (
@@ -75,15 +62,7 @@ export const App = () => {
               <PrivateRoute redirectTo="/login" component={<DashboardPage />} />
             }
           >
-            <Route index element={<HomePage />} />
-            <Route path="home" element={<HomePage />} />
-            <Route path="statistics" element={<StatisticsPage />} />
-            <Route
-              path="currency"
-              element={
-                isTabletOrDesktop ? <Navigate to="/" /> : <CurrencyPage />
-              }
-            />
+    
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
