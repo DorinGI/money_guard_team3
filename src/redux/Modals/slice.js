@@ -8,6 +8,7 @@ const initialState = {
     comment: '',
     amount: 0,
   },
+
   isEditModalOpen: false,
   isAddModalOpen: false,
   isEditId: '',
@@ -21,6 +22,7 @@ const modalsSlice = createSlice({
     selectIsEditModalOpen: state => state.isEditModalOpen,
     selectIsAddModalOpen: state => state.isAddModalOpen,
     selectIsEditID: state => state.isEditId,
+
   },
   reducers: {
     takeTransactionData: (state, { payload }) => {
@@ -31,14 +33,14 @@ const modalsSlice = createSlice({
     },
     closeEditModal: state => {
       state.isEditModalOpen = false;
-      state = initialState;
+      //state = initialState;
     },
     openAddModal: state => {
       state.isAddModalOpen = true;
     },
     closeAddModal: state => {
       state.isAddModalOpen = false;
-      state = initialState;
+      //state = initialState;
     },
     addEditId: (state, { payload }) => {
       state.isEditId = payload;
@@ -60,4 +62,5 @@ export const {
   selectIsEditModalOpen,
   selectIsAddModalOpen,
   selectIsEditID,
+
 } = modalsSlice.selectors;

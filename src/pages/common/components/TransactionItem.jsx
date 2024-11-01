@@ -1,16 +1,21 @@
 import React from 'react';
 import styles from './TransactionsItem.module.css';
 
-const TransactionItem = ({ transaction }) => {
+const TransactionItem = ({ transaction, onDelete }) => {
   return (
     <tr className={styles.transactionCard}>
-      <td>Date{transaction.date}</td>
-      <td> Type{transaction.type}</td>
-      <td>Category{transaction.category}</td>
-      <td>Comment{transaction.comment}</td>
-      <td>${transaction.sum}</td>
+      <td>{transaction.date}</td>
+      <td>{transaction.type}</td>
+      <td>{transaction.category}</td>
+      <td>{transaction.comment}</td>
+      <td className={styles.sumCell}>{transaction.sum}</td>
       <td>
-        <button className={styles.deleteButton}>Delete</button>
+        <button
+          className={styles.deleteButton}
+          onClick={() => onDelete(transaction.id)}
+        >
+          Delete
+        </button>
       </td>
     </tr>
   );
