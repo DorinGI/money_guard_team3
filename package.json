@@ -3,22 +3,6 @@
   "version": "2.0.0",
   "description": "",
   "homepage": "https://DorinGI.github.io/money_guard_team3",
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DorinGI/money_guard_team3.git"
-  },
-  "keywords": [],
-  "author": "Alexander Repeta <alexander.repeta@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/DorinGI/money_guard_team3/issues"
-  },
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -49,6 +33,23 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.80.5",
     "yup": "^1.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint:js": "eslint src/**/*.{js,jsx}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DorinGI/money_guard_team3.git"
+  },
+  "keywords": [],
+  "author": "Alexander Repeta <alexander.repeta@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DorinGI/money_guard_team3/issues"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.6.0",
