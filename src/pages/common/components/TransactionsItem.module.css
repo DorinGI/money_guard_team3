@@ -2,17 +2,24 @@
 
 .transactionCard {
   transition: background-color 0.3s ease;
+  border-top: 1px solid var(--white-40);
 }
 .transactionCard:hover {
-  background-color: #f0f0f0;
+  background-color: var(--white-60);
 }
 
 td {
   padding: 10px;
+  color: var(--white);
+}
+
+.sumCell{
+  color: var(--yellow);
+  font-weight:bold;
 }
 
 .deleteButton {
-  background: linear-gradient(to bottom, #ffc727 0%, #9e40ba 61%, #7000ff 91%);
+  background: linear-gradient(to bottom, var(--yellow) 0%, #9e40ba 61%, #7000ff 91%);
   color: white;
   border: none;
   border-radius: 5px;
@@ -22,5 +29,5 @@ td {
 }
 
 .deleteButton:hover {
-  background-color: #e5d3ff;
+  background:var(--yellow);
 }
