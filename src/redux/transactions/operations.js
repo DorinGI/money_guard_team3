@@ -1,24 +1,39 @@
-import axios from "axios";
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import axiosConfig from "../axiosConfig";
-import { toast } from "react-toastify";
+import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axiosConfig from '../axiosConfig';
+import { toast } from 'react-toastify';
 
 // Configurăm axios
 axiosConfig.setAxiosBaseURL();
 axiosConfig.setAxiosHeader();
 
-// *Adaugă tranzacție //
-const addTransaction = createAsyncThunk(
-  "transactions/addTransaction",
-  async (transactionData, thunkAPI) => {
+const getTransactionsCategories = createAsyncThunk(
+  'transactions/getCategories',
+  async (_, thunkAPI) => {
     try {
-      const response = await axios.post("/transactions", transactionData);
-      toast.success("Transaction added successfully!");
+      const response = await axios.get('/transaction-categories');
       return response.data;
     } catch (error) {
       const errorNotify =
         error.response?.data?.message ||
-        "Operation failed, transaction not saved. We are facing some technical problems with our servers!";
+        'Operation failed, transaction not saved. We are facing some technical problems with our servers!';
+      toast.error(errorNotify);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+// *Adaugă tranzacție //
+const addTransaction = createAsyncThunk(
+  'transactions/addTransaction',
+  async (transactionData, thunkAPI) => {
+    try {
+      const response = await axios.post('/transactions', transactionData);
+      toast.success('Transaction added successfully!');
+      return response.data;
+    } catch (error) {
+      const errorNotify =
+        error.response?.data?.message ||
+        'Operation failed, transaction not saved. We are facing some technical problems with our servers!';
       toast.error(errorNotify);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -27,15 +42,15 @@ const addTransaction = createAsyncThunk(
 
 // *Obține toate tranzacțiile //
 const fetchAllTransactions = createAsyncThunk(
-  "transactions/fetchAllTransaction",
+  'transactions/fetchAllTransaction',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("/transactions");
+      const response = await axios.get('/transactions');
       return response.data;
     } catch (error) {
       const errorNotify =
         error.response?.data?.message ||
-        "Operation failed, transaction not saved. We are facing some technical problems with our servers!";
+        'Operation failed, transaction not saved. We are facing some technical problems with our servers!';
       toast.error(errorNotify);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -44,16 +59,16 @@ const fetchAllTransactions = createAsyncThunk(
 
 // *Șterge tranzacție //
 const deleteTransaction = createAsyncThunk(
-  "transactions/deleteTransaction",
+  'transactions/deleteTransaction',
   async (transactionId, thunkAPI) => {
     try {
       await axios.delete(`/transactions/${transactionId}`);
-      toast.success("Transaction deleted successfully!");
+      toast.success('Transaction deleted successfully!');
       return transactionId;
     } catch (error) {
       const errorNotify =
         error.response?.data?.message ||
-        "Operation failed, transaction not deleted. We are facing some technical problems with our servers!";
+        'Operation failed, transaction not deleted. We are facing some technical problems with our servers!';
       toast.error(errorNotify);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -62,19 +77,19 @@ const deleteTransaction = createAsyncThunk(
 
 // *Modifică tranzacție //
 const modifyTransaction = createAsyncThunk(
-  "transactions/modifyTransaction",
+  'transactions/modifyTransaction',
   async ({ transactionId, transactionData }, thunkAPI) => {
     try {
       const response = await axios.patch(
         `/transactions/${transactionId}`,
         transactionData
       );
-      toast.success("Transaction modified successfully!");
+      toast.success('Transaction modified successfully!');
       return response.data;
     } catch (error) {
       const errorNotify =
         error.response?.data?.message ||
-        "Operation failed, transaction not modified. We are facing some technical problems with our servers!";
+        'Operation failed, transaction not modified. We are facing some technical problems with our servers!';
       toast.error(errorNotify);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -83,7 +98,7 @@ const modifyTransaction = createAsyncThunk(
 
 // *Obține rezumatul tranzacțiilor //
 const fetchTransactionsSummary = createAsyncThunk(
-  "transactions/fetchTransactionsSummary",
+  'transactions/fetchTransactionsSummary',
   async ({ month, year }, thunkAPI) => {
     try {
       const response = await axios.get(
@@ -93,7 +108,7 @@ const fetchTransactionsSummary = createAsyncThunk(
     } catch (error) {
       const errorNotify =
         error.response?.data?.message ||
-        "Operation failed and transaction summary not fetched. We are facing some technical problems with our servers!";
+        'Operation failed and transaction summary not fetched. We are facing some technical problems with our servers!';
       toast.error(errorNotify);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -101,6 +116,7 @@ const fetchTransactionsSummary = createAsyncThunk(
 );
 
 export {
+  getTransactionsCategories,
   fetchAllTransactions,
   addTransaction,
   deleteTransaction,

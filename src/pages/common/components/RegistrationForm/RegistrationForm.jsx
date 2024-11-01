@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { register } from '../../../../redux/slices/authSlice';
+import { registerThunk } from '../../../../redux/auth/operations';
 import icons from '../../../../images/icons/icons.svg';
 
 import {
@@ -74,7 +74,7 @@ const RegistrationForm = () => {
   const isFilterActive = pass.length >= 6;
 
   const submit = data => {
-    dispatch(register(data))
+    dispatch(registerThunk(data))
       .unwrap()
       .then(res => {
         toast.success(`Welcome ${res.user.username}!`);

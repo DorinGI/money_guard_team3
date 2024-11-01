@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { NavLink } from "react-router-dom";
-import loginMobile from "../../images/login-bkg/mobile-login-bkg.webp";
-import loginTablet from "../../images/login-bkg/tablet-login-bkg.webp";
-import loginDesktop from "../../images/login-bkg/desktop-login-bkg.webp";
-import TextField from "@mui/material/TextField";
+import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
+import loginMobile from '../../../images/login-bkg/mobile-login-bkg.webp';
+import loginTablet from '../../../images/login-bkg/tablet-login-bkg.webp';
+import loginDesktop from '../../../images/login-bkg/desktop-login-bkg.webp';
+import TextField from '@mui/material/TextField';
 
 export const StyledSection = styled.section`
   width: 100vw;
