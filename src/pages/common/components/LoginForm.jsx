@@ -1,157 +1,111 @@
-import React from 'react';
-import { useFormik } from 'formik';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { loginThunk } from '../../../redux/auth/operations';
+import icons from '../../../images/icons/icons.svg';
 import * as yup from 'yup';
-import { Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../../redux/auth/operations';
-import StyledLoginButton from '@mui/material/Button';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import LockIcon from '@mui/icons-material/Lock';
-import { selectIsLoggedIn } from '../../../redux/auth/selectors';
-import logoMoneyGuard from '../../../images/logo_money_guard.svg';
-import {
-  StyledSection,
-  StyledForm,
-  StyledLink,
-  LogoBox,
-  LogoImg,
-  LogoName,
-  StyledLoginField,
-} from '../components/LoginForm.styled';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-const validationSchema = yup.object({
-  email: yup
-    .string('Enter your email')
-    .email('Enter a valid email')
-    .required('Email is required'),
+import {
+  Gradient,
+  StyledBoxForm,
+  StyledEmailIcon,
+  StyledErr,
+  StyledEye,
+  StyledEyeIcon,
+  StyledForm,
+  StyledIcon,
+  StyledInputBox,
+  StyledInputField,
+  StyledLabel,
+  StyledLink,
+  StyledLogin,
+  StyledNoEyeIcon,
+  StyledPasswordIcon,
+  StyledTitle,
+} from './LoginForm.styled';
+import { toast } from 'react-toastify';
+
+const userSchema = yup.object().shape({
+  email: yup.string().email('Please enter a valid email!').required('Required'),
   password: yup
-    .string('Enter your password')
-    .min(6, 'Password should be at least 6 characters length')
-    .required('Password is required'),
+    .string()
+    .min(6, 'Password must be at least 6 characters!')
+    .max(12, 'Password must be at most 12 characters')
+    .required('Required'),
 });
 
 const LoginForm = () => {
-  const dispatch = useDispatch();
-  const isLogin = useSelector(selectIsLoggedIn);
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
-    validationSchema: validationSchema,
-    onSubmit: values => {
-      handleSubmit(values);
-    },
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(userSchema),
   });
 
-  if (isLogin) {
-    return <Navigate to="/" />;
-  }
+  const dispatch = useDispatch();
 
-  const handleSubmit = values => {
-    dispatch(login(values));
+  const [showPass, setShowPass] = useState(false);
+  const togglePassVisibility = () => setShowPass(!showPass);
+  const thisEye = !showPass ? { type: 'password' } : { type: 'text' };
+
+  const submit = data => {
+    dispatch(loginThunk(data))
+      .unwrap()
+      .then(res => {
+        toast.success(`Welcome ${res.user.username}!`);
+      })
+      .catch(err => {
+        toast.error('Login failed. Please check your credentials.');
+      });
+
+    reset();
   };
 
   return (
-    <StyledSection>
-      <StyledForm onSubmit={formik.handleSubmit}>
-        <LogoBox>
-          <LogoImg src={logoMoneyGuard} alt="logo" />
-          <LogoName>Money Guard</LogoName>
-        </LogoBox>
-        <StyledLoginField
-          fullWidth
-          id="email"
-          name="email"
-          label={
-            <span
-              style={{
-                color: 'rgba(255, 255, 255, 0.60)',
-                fontSize: '18px',
-                lineHeight: '27px',
-              }}
-            >
-              <EmailOutlinedIcon
-                style={{ verticalAlign: 'middle', marginRight: '20px' }}
-              />{' '}
-              E-mail
-            </span>
-          }
-          type="email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.email && Boolean(formik.errors.email)}
-          helperText={formik.touched.email && formik.errors.email}
-          InputProps={{
-            inputProps: { style: { color: '#FFFFFF99' } },
-          }}
-          style={{
-            width: '90%',
-            marginTop: '52px',
+    <StyledBoxForm>
+      <Gradient />
+      <StyledForm onSubmit={handleSubmit(submit)}>
+        <StyledIcon width={25} height={25}>
+          <use href={`${icons}#icon-Logo`} />
+        </StyledIcon>
+        <StyledTitle>Money Guard</StyledTitle>
+        <StyledLabel>
+          <StyledInputBox>
+            <StyledEmailIcon width={24} height={24} />
+            <StyledInputField
+              {...register('email')}
+              placeholder="E-mail"
+              type="text"
+              name="email"
+            />
+          </StyledInputBox>
+          <StyledErr>{errors.email?.message}</StyledErr>
+        </StyledLabel>
+        <StyledLabel>
+          <StyledInputBox>
+            <StyledPasswordIcon width={24} height={24} />
 
-            outline: 'none',
-          }}
-        />
-        <StyledLoginField
-          fullWidth
-          id="password"
-          name="password"
-          label={
-            <span
-              style={{
-                color: 'rgba(255, 255, 255, 0.60)',
-                fontSize: '18px',
-                lineHeight: '27px',
-              }}
-            >
-              <LockIcon
-                style={{ verticalAlign: 'middle', marginRight: '20px' }}
-              />{' '}
-              Password
-            </span>
-          }
-          type="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.password && Boolean(formik.errors.password)}
-          helperText={formik.touched.password && formik.errors.password}
-          InputProps={{
-            inputProps: { style: { color: '#FFFFFF99' } },
-          }}
-          style={{
-            width: '90%',
-            marginTop: '40px',
-          }}
-        />
-        <StyledLoginButton
-          type="submit"
-          style={{
-            width: '319px',
-            height: '50px',
-            background:
-              'linear-gradient(97deg, #FFC727 0%, #9E40BA 61%, #7000FF 91%)',
-            boxShadow: '1px 9px 15px rgba(0, 0, 0, 0.20)',
-            borderRadius: '20px',
-            color: '#ffffff',
-            fontWeight: 400,
-            fontSize: '18px',
-            textTransform: 'uppercase',
-            letterSpacing: '1.80',
-            textAlign: 'center',
-            cursor: 'pointer',
-            marginTop: '52px',
-            marginBottom: '20px',
-            transition: 'background 0.3s, font-weight 0.3s',
-          }}
-        >
-          Log In
-        </StyledLoginButton>
+            <StyledInputField
+              {...register('password')}
+              placeholder="Password"
+              name="password"
+              {...thisEye}
+            />
+            <StyledEye type="button" onClick={togglePassVisibility}>
+              {!showPass ? <StyledEyeIcon /> : <StyledNoEyeIcon />}
+            </StyledEye>
+          </StyledInputBox>
+          <StyledErr>{errors.password?.message}</StyledErr>
+        </StyledLabel>
+        <StyledLogin type="submit">Log in</StyledLogin>
 
-        <StyledLink to="/registration">Register</StyledLink>
+        <StyledLink to="/register">Register</StyledLink>
       </StyledForm>
-    </StyledSection>
+    </StyledBoxForm>
   );
 };
 

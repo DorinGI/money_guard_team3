@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchCurrency } from '../currency/operations';
-// import { fetchTransSumThunk } from '../statistics/operations';
+import { fetchTransSumThunk } from '../statistics/operations';
 import {
   addTransaction,
   fetchAllTransactions,
@@ -36,9 +36,9 @@ const slice = createSlice({
       .addCase(fetchCurrency.pending, handlePending)
       .addCase(fetchCurrency.rejected, handleRejected)
 
-      //   .addCase(fetchTransSumThunk.pending, handlePending)
-      //   .addCase(fetchTransSumThunk.fulfilled, handleFulfilled)
-      //   .addCase(fetchTransSumThunk.rejected, handleRejected)
+      .addCase(fetchTransSumThunk.pending, handlePending)
+      .addCase(fetchTransSumThunk.fulfilled, handleFulfilled)
+      .addCase(fetchTransSumThunk.rejected, handleRejected)
 
       .addCase(getTransactionsCategories.pending, handlePending)
       .addCase(getTransactionsCategories.fulfilled, handleFulfilled)

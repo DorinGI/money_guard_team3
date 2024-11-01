@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { logout } from '../../../../redux/auth/operations';
+import { logoutThunk } from '../../../../redux/auth/operations';
 import icons from '../../../../images/icons/icons.svg';
 import {
   ModalButton,
@@ -19,7 +19,7 @@ const ModalLogout = ({ closeModal }) => {
   const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const dispatch = useDispatch();
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutThunk());
   };
 
   useEffect(() => {

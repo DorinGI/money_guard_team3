@@ -22,6 +22,7 @@ import CurrencyPage from './pages/CurrencyPage';
 // import styles from './App.module.css';
 
 const App = () => {
+  // debugger;
   const dispatch = useDispatch();
   const isRefreshing = useSelector(selectIsRefreshing);
   const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });

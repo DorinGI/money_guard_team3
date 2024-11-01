@@ -8,8 +8,6 @@ export const PrivateRoute = ({ component, redirectTo = '/dashboard' }) => {
   const isRefreshing = useSelector(selectIsRefreshing);
   const shouldRedirect = !isLoggedIn && !isRefreshing;
 
-  console.log('Is logged in:', isLoggedIn);
-
   return shouldRedirect ? (
     <Navigate to={redirectTo} state={{ from: location }} />
   ) : (

@@ -1,107 +1,220 @@
-import styled from 'styled-components';
+import { MdEmail } from 'react-icons/md';
+import { IoMdLock } from 'react-icons/io';
 import { NavLink } from 'react-router-dom';
-import loginMobile from '../../../images/login-bkg/mobile-login-bkg.webp';
-import loginTablet from '../../../images/login-bkg/tablet-login-bkg.webp';
-import loginDesktop from '../../../images/login-bkg/desktop-login-bkg.webp';
-import TextField from '@mui/material/TextField';
+import styled from 'styled-components';
+import { VscEye, VscEyeClosed } from 'react-icons/vsc';
 
-export const StyledSection = styled.section`
-  width: 100vw;
+export const StyledBoxForm = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background-color: #1e0646;
-  background-image: url(${loginMobile});
-  background-repeat: no-repeat;
-  background-size: cover;
+  padding: 23px 20px;
+  background: var(--Form-color, rgba(255, 255, 255, 0.1));
 
-  @media screen and (min-width: 768px) {
-    background-image: url(${loginTablet});
-  }
+  @media only screen and (min-width: 768px) {
+    width: 533px;
+    height: 570px;
+    padding: 80px 62px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
 
-  @media screen and (min-width: 1280px) {
-    background-image: url(${loginDesktop});
-  }
-`;
-
-export const LogoBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const LogoImg = styled.img`
-  margin-top: 80px;
-  width: 25px;
-  height: 25px;
-
-  @media screen and (min-width: 768px) {
-    width: 36px;
-    height: 36px;
+    &::before {
+      content: '';
+      backdrop-filter: blur(50px);
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 8px;
+      box-shadow: 0px 4px 60px 0px rgba(0, 0, 0, 0.25);
+    }
   }
 `;
 
-export const LogoName = styled.span`
-  color: #fbfbfb;
+export const Gradient = styled.div`
+  @media only screen and (min-width: 768px) {
+    z-index: -20;
+    position: absolute;
+    width: 454px;
+    height: 454px;
+    border-radius: 454px;
+    background: rgba(47, 21, 176, 0.73);
+    filter: blur(100px);
+    inset: 0;
+    margin: 0 auto;
+  }
+`;
+
+export const StyledIcon = styled.svg`
+  font-size: 25px;
+  @media only screen and (min-width: 768px) {
+    width: 35px;
+    height: 35px;
+  }
+`;
+
+export const StyledTitle = styled.p`
+  color: var(--white, #fbfbfb);
   font-size: 19px;
-
-  @media screen and (min-width: 768px) {
-    font-size: 27px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 52px;
+  @media only screen and (min-width: 768px) {
+    font-size: 26.963px;
   }
 `;
 
 export const StyledForm = styled.form`
-  display: block;
-  position: relative;
+  display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  border-radius: 8px;
+  margin: 0 auto;
+  min-width: 100%;
+`;
 
-  @media screen and (min-width: 768px) {
-    width: 533px;
-    height: 620px;
-    background: radial-gradient(#2f1f81, #ffffff3a);
-    backdrop-filter: blur(50px);
-    box-shadow: 0px 4px 60px rgba(0, 0, 0, 0.25);
+export const StyledLabel = styled.label`
+  color: rgba(156, 163, 175, 1);
+  max-width: 100%;
+  position: relative;
+  height: 45px;
+  margin-bottom: 40px;
+`;
+
+export const StyledInputBox = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  border-bottom: 1px solid var(--white-40, rgba(255, 255, 255, 0.4));
+
+  max-width: 100%;
+  width: 280px;
+
+  @media only screen and (min-width: 768px) {
+    width: 409px;
+  }
+`;
+
+export const StyledEmailIcon = styled(MdEmail)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 24px;
+  margin-left: 12px;
+`;
+
+export const StyledPasswordIcon = styled(IoMdLock)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 24px;
+  margin-left: 12px;
+`;
+
+export const StyledInputField = styled.input`
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  padding: 5px 11px;
+  position: relative;
+`;
+
+export const StyledEye = styled.button`
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  background-color: transparent;
+  border: none;
+`;
+
+export const StyledNoEyeIcon = styled(VscEyeClosed)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 25px;
+`;
+
+export const StyledEyeIcon = styled(VscEye)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 27px;
+`;
+
+export const StyledErr = styled.p`
+  margin-left: 12px;
+  padding-top: 6px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+export const StyledLogin = styled.button`
+  border-radius: 20px;
+  max-height: 50px;
+  padding: 13px 0;
+  background: var(
+    --button-gradient,
+    linear-gradient(97deg, #ffc727 -16.42%, #9e40ba 97.04%, #7000ff 150.71%)
+  );
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  border: none;
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  color: var(--white, #fbfbfb);
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  max-width: 280px;
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+  @media only screen and (min-width: 768px) {
+    max-width: 300px;
   }
 `;
 
 export const StyledLink = styled(NavLink)`
-  width: 319px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  max-width: 280px;
+  max-height: 50px;
+  padding: 13px 0;
+  outline: transparent;
+  cursor: pointer;
+  margin-top: 20px;
+
+  color: rgba(98, 63, 139, 1);
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+
   border-radius: 20px;
-  border: 1px solid #4a56e2;
-  margin: auto;
+  background: #fcfcfc;
   box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
 
-  font-weight: 400;
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: 1.8;
-  word-wrap: break-word;
-  text-align: center;
-  cursor: pointer;
-  background-color: #ffffff;
-  color: #623f8b;
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
 
   &:hover {
-    font-weight: 600;
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
   }
-`;
-
-export const StyledLoginField = styled(TextField)`
-  fieldset {
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 0;
-    &:hover {
-      border-bottom: 1px solid ${({ theme }) => theme.backgrounds.active};
-    }
+  @media only screen and (min-width: 768px) {
+    max-width: 300px;
   }
 `;

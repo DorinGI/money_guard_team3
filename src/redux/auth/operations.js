@@ -19,7 +19,7 @@ export const registerThunk = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk(
+export const loginThunk = createAsyncThunk(
   'auth/login',
   async (credentials, thunkAPI) => {
     try {
@@ -32,14 +32,17 @@ export const login = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
-  try {
-    await api.delete('/auth/sign-out');
-    clearToken();
-  } catch (e) {
-    return thunkAPI.rejectWithValue(e.message);
+export const logoutThunk = createAsyncThunk(
+  'auth/logout',
+  async (_, thunkAPI) => {
+    try {
+      await api.delete('/auth/sign-out');
+      clearToken();
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
   }
-});
+);
 
 export const refreshUser = createAsyncThunk(
   'auth/refresh',
