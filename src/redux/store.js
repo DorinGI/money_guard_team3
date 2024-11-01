@@ -13,6 +13,7 @@ import {
 import storage from 'redux-persist/lib/storage';
 import { globalReducer } from './slices/globalSlice';
 import { transactionsReducer } from '../redux/transactions/slice';
+import { modalsReducer } from './Modals/slice';
 import { currencyReducer } from './currency/slice.js';
 // import { statisticsReducer } from './statistics/slice';
 
@@ -27,11 +28,14 @@ const currencyPersistConfig = {
   storage,
 };
 
+
 export const store = configureStore({
   reducer: {
     auth: persistReducer(authPersistConfig, authReducer),
     currency: persistReducer(currencyPersistConfig, currencyReducer),
     transactions: transactionsReducer,
+    auth: authReducer,
+    modals: modalsReducer
     // statistics: statisticsReducer,
     global: globalReducer,
   },
