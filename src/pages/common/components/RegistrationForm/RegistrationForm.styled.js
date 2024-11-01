@@ -1,21 +1,23 @@
 import { MdEmail } from 'react-icons/md';
 import { IoMdLock } from 'react-icons/io';
+import { FaUser } from 'react-icons/fa6';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import PasswordStrengthBar from 'react-password-strength-bar-with-style-item';
 import { VscEye, VscEyeClosed } from 'react-icons/vsc';
 
 export const StyledBoxForm = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   padding: 23px 20px;
+  min-height: 100vh;
   background: var(--Form-color, rgba(255, 255, 255, 0.1));
 
   @media only screen and (min-width: 768px) {
     width: 533px;
-    height: 570px;
-    padding: 80px 62px;
+    min-height: 624px;
+    padding: 40px 62px;
     position: fixed;
     left: 50%;
     top: 50%;
@@ -23,6 +25,7 @@ export const StyledBoxForm = styled.div`
     border-radius: 8px;
 
     &::before {
+      /* background-color: rgba(255, 255, 255, 0.1); */
       content: '';
       backdrop-filter: blur(50px);
       position: absolute;
@@ -33,7 +36,6 @@ export const StyledBoxForm = styled.div`
     }
   }
 `;
-
 export const Gradient = styled.div`
   @media only screen and (min-width: 768px) {
     z-index: -20;
@@ -47,7 +49,6 @@ export const Gradient = styled.div`
     margin: 0 auto;
   }
 `;
-
 export const StyledIcon = styled.svg`
   font-size: 25px;
   @media only screen and (min-width: 768px) {
@@ -58,11 +59,12 @@ export const StyledIcon = styled.svg`
 
 export const StyledTitle = styled.p`
   color: var(--white, #fbfbfb);
-  font-size: 19px;
+  font-size: 19.111px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  margin-bottom: 52px;
+  margin-bottom: 40px;
+
   @media only screen and (min-width: 768px) {
     font-size: 26.963px;
   }
@@ -75,14 +77,22 @@ export const StyledForm = styled.form`
   align-items: center;
   margin: 0 auto;
   min-width: 100%;
+  height: 100%;
+`;
+
+export const StyledLabelBox = styled.div`
+  max-width: 100%;
+  /* margin: 0 auto;
+  margin-bottom: 40px; */
+  position: relative;
+  height: 45px;
+  margin-bottom: 25px;
 `;
 
 export const StyledLabel = styled.label`
+  display: block;
   color: rgba(156, 163, 175, 1);
   max-width: 100%;
-  position: relative;
-  height: 45px;
-  margin-bottom: 40px;
 `;
 
 export const StyledInputBox = styled.div`
@@ -99,6 +109,13 @@ export const StyledInputBox = styled.div`
   @media only screen and (min-width: 768px) {
     width: 409px;
   }
+`;
+
+export const StyledUserIcon = styled(FaUser)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  width: 18px;
+  height: 16px;
+  margin-left: 12px;
 `;
 
 export const StyledEmailIcon = styled(MdEmail)`
@@ -131,6 +148,7 @@ export const StyledEye = styled.button`
   right: 6px;
   background-color: transparent;
   border: none;
+  cursor: pointer;
 `;
 
 export const StyledNoEyeIcon = styled(VscEyeClosed)`
@@ -145,13 +163,45 @@ export const StyledEyeIcon = styled(VscEye)`
 
 export const StyledErr = styled.p`
   margin-left: 12px;
-  padding-top: 6px;
+  margin-top: 7px;
   color: rgba(255, 255, 255, 0.4);
   font-size: 14px;
   font-weight: 500;
+  width: 100%;
+  /* margin-top: 8px; */
 `;
 
-export const StyledLogin = styled.button`
+export const StyledSpan = styled.span`
+  width: 280px;
+  max-width: 100%;
+  margin-top: -40px;
+  @media only screen and (min-width: 768px) {
+    width: 409px;
+  }
+`;
+
+export const StyledPasswordStrengthBar = styled(PasswordStrengthBar)`
+  div {
+    height: 4px !important;
+    stroke: #ffc727;
+    filter: ${({ active }) =>
+      active ? 'drop-shadow(0px 1px 8px rgba(255, 199, 39, 0.5))' : 'none'};
+    :first-child {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    :last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    :nth-child(even) {
+      width: 0 !important;
+    }
+  }
+`;
+
+export const StyledRegister = styled.button`
+  margin-top: 40px;
   border-radius: 20px;
   max-height: 50px;
   padding: 13px 0;
@@ -162,8 +212,6 @@ export const StyledLogin = styled.button`
   box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
   width: 100%;
   border: none;
-  transition: scale 250ms ease-in-out,
-  box-shadow 250ms ease-in-out;
 
   color: var(--white, #fbfbfb);
   text-align: center;
@@ -173,9 +221,11 @@ export const StyledLogin = styled.button`
   line-height: normal;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-
   cursor: pointer;
   max-width: 280px;
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
   &:hover {
     scale: 0.99;
     box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
