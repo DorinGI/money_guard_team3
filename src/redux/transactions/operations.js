@@ -12,7 +12,7 @@ const addTransaction = createAsyncThunk(
   'transactions/addTransaction',
   async (transactionData, thunkAPI) => {
     try {
-      const response = await axios.post('/transactions', transactionData);
+      const response = await axios.post('/api/transactions', transactionData);
       toast.success('Transaction added successfully!');
       return response.data;
     } catch (error) {
@@ -30,7 +30,7 @@ const fetchAllTransactions = createAsyncThunk(
   'transactions/fetchAllTransaction',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get('/transactions');
+      const response = await axios.get('/api/transactions');
       return response.data;
     } catch (error) {
       const errorNotify =
@@ -47,7 +47,7 @@ const deleteTransaction = createAsyncThunk(
   'transactions/deleteTransaction',
   async (transactionId, thunkAPI) => {
     try {
-      await axios.delete(`/transactions/${transactionId}`);
+      await axios.delete(`/api/transactions/${transactionId}`);
       toast.success('Transaction deleted successfully!');
       return transactionId;
     } catch (error) {
@@ -66,7 +66,7 @@ const modifyTransaction = createAsyncThunk(
   async ({ transactionId, transactionData }, thunkAPI) => {
     try {
       const response = await axios.patch(
-        `/transactions/${transactionId}`,
+        `/api/transactions/${transactionId}`,
         transactionData
       );
       toast.success('Transaction modified successfully!');
@@ -87,7 +87,7 @@ const fetchTransactionsSummary = createAsyncThunk(
   async ({ month, year }, thunkAPI) => {
     try {
       const response = await axios.get(
-        `/transactions-summary?month=${month}&year=${year}`
+        `/api/transactions-summary?month=${month}&year=${year}`
       );
       return response.data;
     } catch (error) {

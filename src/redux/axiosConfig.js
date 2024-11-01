@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const setAxiosBaseURL = () => {
-  axios.defaults.baseURL = 'https://wallet.b.goit.study/docs/';
+  axios.defaults.baseURL = 'https://wallet.b.goit.study/';
 };
 
 const setAxiosHeader = tokenReceived => {
