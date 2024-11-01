@@ -7,21 +7,6 @@ import { toast } from 'react-toastify';
 axiosConfig.setAxiosBaseURL();
 axiosConfig.setAxiosHeader();
 
-const getTransactionsCategories = createAsyncThunk(
-  'transactions/getCategories',
-  async (_, thunkAPI) => {
-    try {
-      const response = await axios.get('/transaction-categories');
-      return response.data;
-    } catch (error) {
-      const errorNotify =
-        error.response?.data?.message ||
-        'Operation failed, transaction not saved. We are facing some technical problems with our servers!';
-      toast.error(errorNotify);
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
 // *Adaugă tranzacție //
 const addTransaction = createAsyncThunk(
   'transactions/addTransaction',
@@ -117,15 +102,15 @@ const fetchTransactionsSummary = createAsyncThunk(
 
 // *Obține categoriile tranzacțiilor //
 const getTransactionsCategories = createAsyncThunk(
-  "transactions/getTransactionsCategories",
+  'transactions/getTransactionsCategories',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get("/transactions/categories");
+      const response = await axios.get('/transactions/categories');
       return response.data;
     } catch (error) {
       const errorNotify =
         error.response?.data?.message ||
-        "Operation failed and transaction categories not fetched. We are facing some technical problems with our servers!";
+        'Operation failed and transaction categories not fetched. We are facing some technical problems with our servers!';
       toast.error(errorNotify);
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -133,7 +118,6 @@ const getTransactionsCategories = createAsyncThunk(
 );
 
 export {
-  getTransactionsCategories,
   fetchAllTransactions,
   addTransaction,
   deleteTransaction,
