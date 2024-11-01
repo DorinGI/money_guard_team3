@@ -11,7 +11,7 @@ import { persistor, store } from './redux/store';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter>
+      <BrowserRouter basename="/money_guard_team3">
         <App />
         <ToastContainer
           position="top-center"

@@ -28,12 +28,13 @@ const Header = ({ closeModal = null }) => {
           <p>Money Guard</p>
         </Link>
         <div className={styles.userContainer}>
-          <span className={styles.userInfo}>Username</span>
+          <span className={styles.userInfo}>{userName}</span>
+          {isModalOpen && <ModalLogout closeModal={setIsModalOpen} />}
           <button className={styles.logoutButton} onClick={handleLogout}>
             <svg width="17" height="17">
               <use href={`${sprite}#icon-exit`}></use>
             </svg>
-            <p>Exit</p>
+            {isTabletOrDesktop && <p>Exit</p>}
           </button>
         </div>
       </div>
