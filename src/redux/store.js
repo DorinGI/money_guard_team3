@@ -15,7 +15,6 @@ import { globalReducer } from './slices/globalSlice';
 import { transactionsReducer } from '../redux/transactions/slice';
 import { currencyReducer } from './currency/slice.js';
 // import { statisticsReducer } from './statistics/slice';
-// import authReducer from './slices/authSlice';
 
 const authPersistConfig = {
   key: 'auth',
