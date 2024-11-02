@@ -84,7 +84,7 @@ const App = () => {
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      <LoadingSpinner visible={isLoading} />
+      {/* <LoadingSpinner visible={isLoading} /> */}
       {/* <div className={styles.section}>
         <header className={styles.header}>{<Header />}</header>
         <div className={styles.mainContainer}>

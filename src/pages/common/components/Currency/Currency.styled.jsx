@@ -12,30 +12,28 @@ export const CurrencyWrapper = styled.div`
   box-shadow: 0 4px 60px 0 rgba(0, 0, 0, 0.25);
   overflow: clip;
 
-
   @media only screen and (max-width: 1279px) {
     margin-left: 0;
     width: 336px;
   }
 
-
   @media only screen and (max-width: 769px) {
     width: 336px;
     border-radius: 0px 0px 8px 8px;
-    background: rgba(74, 86, 226, 0.10);
+    background: rgba(74, 86, 226, 0.1);
   }
 
   @media only screen and (max-width: 425px) {
     width: 320px;
     margin-top: 0;
-    margin-left:-20px;
+    margin-left: -20px;
   }
 `;
 
 export const CurrencyTable = styled.div`
   max-height: 170px;
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 80px;
 
   @media only screen and (max-width: 1280px) {
     margin-top: 0;
@@ -49,7 +47,7 @@ export const CurrencyTable = styled.div`
 
 export const CurrencyHeadWrapper = styled.div`
   background: rgba(103, 77, 166, 0.7);
-`
+`;
 
 export const CurrencyTableHead = styled.ul`
   display: flex;
@@ -58,10 +56,11 @@ export const CurrencyTableHead = styled.ul`
   padding: 19px 0;
   margin: 0 auto 24px;
   width: 480px;
-  margin-left: 58px;
+  margin-left: 80px;
+  list-style-type: none;
 
   @media only screen and (max-width: 1280px) {
-    width:336px;
+    width: 336px;
   }
 
   @media only screen and (max-width: 1279px) {
@@ -76,7 +75,6 @@ export const CurrencyTableHead = styled.ul`
   @media only screen and (max-width: 320px) {
     gap: 52px;
   }
-
 `;
 
 export const CurrencyTableBody = styled.ul`
@@ -91,15 +89,14 @@ export const CurrencyTableBody = styled.ul`
   @media only screen and (max-width: 320px) {
     gap: 57px;
   }
-
 `;
 
 export const CurrencyTableBodyList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin-bottom: 14px ;
-  margin-left: 68px;
+  margin-bottom: 14px;
+  margin-left: 32px;
 
   @media only screen and (max-width: 1279px) {
     margin-left: 15px;
@@ -131,55 +128,51 @@ export const CurrencyTableItem = styled.li`
   }
 `;
 
-
 export const CurrecnyDiagram = styled.div`
   position: relative;
   display: block;
   height: auto;
   max-height: 185px;
 
-   @media only screen and (max-width: 1281px) {
-      max-width:480px;
-    }
-
-  img {
-
-     @media only screen and (max-width: 1281px) {
-      width:480px;
-      max-height:167px;
-    }
+  @media only screen and (max-width: 1281px) {
+    max-width: 480px;
   }
 
-
-`
+  img {
+    @media only screen and (max-width: 1281px) {
+      width: 480px;
+      max-height: 167px;
+    }
+  }
+`;
 
 export const LowerNumber = styled.p`
   position: absolute;
-  top: 12px;
+  top: 3px;
   left: 48px;
 
-  color: #FF868D;
+  color: #ff868d;
   font-size: 12px;
   font-weight: 400;
 
   @media only screen and (max-width: 1279px) {
-    display:none;
+    display: none;
   }
-`
+`;
 
 export const HigherNumber = styled.p`
   position: absolute;
-  top: -21px;
+  top: -30px;
   right: 97px;
 
-  color: #FF868D;
+  color: #ff868d;
   font-size: 12px;
   font-weight: 400;
 
   @media only screen and (max-width: 1279px) {
-    display:none;
+    display: none;
   }
-`
+`;
 
 export const Gradient = styled.div`
   z-index: -20;
