@@ -19,7 +19,7 @@ import CurrencyPage from './CurrencyPage';
 import { useDispatch } from 'react-redux';
 import {
   fetchAllTransactions,
-  getTransactionsCategories,
+  // getTransactionsCategories,
 } from '../redux/transactions/operations';
 
 function DashboardPage() {
@@ -32,7 +32,7 @@ function DashboardPage() {
     .replaceAll('/', '');
 
   useEffect(() => {
-    dispatch(getTransactionsCategories());
+    // dispatch(getTransactionsCategories());
     dispatch(fetchAllTransactions());
   }, [dispatch]);
 

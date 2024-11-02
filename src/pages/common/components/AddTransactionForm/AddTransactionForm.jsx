@@ -152,7 +152,7 @@ const AddTransactionForm = ({ closeAddModal }) => {
                 type={'button'}
                 text={'cancel'}
                 variant={'whiteButtton'}
-                handlerFunction={() => closeAddModal()}
+                handlerFunction={closeAddModal}
               />
             </div>
           </Form>

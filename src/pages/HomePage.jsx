@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   fetchAllTransactions,
-  getTransactionsCategories,
+  //   getTransactionsCategories,
 } from '../redux/transactions/operations';
 import { openAddModal } from '../redux/Modals/slice';
 import TransactionList from './common/components/TransactionsList';
@@ -15,7 +14,7 @@ function Home() {
 
   useEffect(() => {
     dispatch(fetchAllTransactions());
-    dispatch(getTransactionsCategories());
+    // dispatch(getTransactionsCategories());
   }, [dispatch]);
 
   const openModal = () => {

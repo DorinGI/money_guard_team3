@@ -5,7 +5,7 @@ import {
   addTransaction,
   fetchAllTransactions,
   deleteTransaction,
-  getTransactionsCategories,
+  //   getTransactionsCategories,
 } from '../transactions/operations';
 
 const initialState = {
@@ -40,9 +40,9 @@ const slice = createSlice({
       .addCase(fetchTransSumThunk.fulfilled, handleFulfilled)
       .addCase(fetchTransSumThunk.rejected, handleRejected)
 
-      .addCase(getTransactionsCategories.pending, handlePending)
-      .addCase(getTransactionsCategories.fulfilled, handleFulfilled)
-      .addCase(getTransactionsCategories.rejected, handleRejected)
+      //   .addCase(getTransactionsCategories.pending, handlePending)
+      //   .addCase(getTransactionsCategories.fulfilled, handleFulfilled)
+      //   .addCase(getTransactionsCategories.rejected, handleRejected)
 
       .addCase(addTransaction.pending, handlePending)
       .addCase(addTransaction.fulfilled, handleFulfilled)
