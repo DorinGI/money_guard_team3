@@ -99,7 +99,7 @@ export const CurrencyTableBodyList = styled.div`
   margin-left: 32px;
 
   @media only screen and (max-width: 1279px) {
-    margin-left: 15px;
+    margin-left: -40px;
     margin-bottom: 0;
     gap: 12px;
   }
@@ -140,8 +140,9 @@ export const CurrecnyDiagram = styled.div`
 
   img {
     @media only screen and (max-width: 1281px) {
-      width: 480px;
+      // width: 480px;
       max-height: 167px;
+      margin-top: 50px;
     }
   }
 `;
@@ -156,7 +157,9 @@ export const LowerNumber = styled.p`
   font-weight: 400;
 
   @media only screen and (max-width: 1279px) {
-    display: none;
+    // display: none;
+    top: 43px;
+    left: 35px;
   }
 `;
 
@@ -170,7 +173,9 @@ export const HigherNumber = styled.p`
   font-weight: 400;
 
   @media only screen and (max-width: 1279px) {
-    display: none;
+    // display: none;
+    top: 20px;
+    right: 65px;
   }
 `;
 

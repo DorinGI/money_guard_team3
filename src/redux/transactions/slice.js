@@ -57,9 +57,7 @@ const transactionsSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         const index = state.items.findIndex(el => el.id === action.payload);
-        if (index !== -1) {
-          state.items.splice(index, 1);
-        }
+        state.items.splice(index, 1);
       })
       .addCase(modifyTransaction.pending, state => {
         state.isLoading = true;
@@ -72,12 +70,7 @@ const transactionsSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         const index = state.items.findIndex(el => el.id === action.payload.id);
-        if (index !== -1) {
-          state.items[index] = {
-            ...state.items[index],
-            ...action.payload,
-          };
-        }
+        state.items.splice(index, 1, action.payload);
       })
       .addCase(fetchAllTransactions.pending, state => {
         state.isLoading = true;

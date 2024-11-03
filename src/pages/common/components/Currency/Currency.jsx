@@ -40,17 +40,18 @@ const Currency = () => {
   useEffect(() => {
     if (isHourPassed() || !lastUpdatedTime) {
       dispatch(fetchCurrency());
-      setCurrency(selectedCurrency);
-    } else {
-      setCurrency(selectedCurrency);
     }
-  }, [dispatch, lastUpdatedTime, isHourPassed, selectedCurrency]);
+  }, [dispatch, lastUpdatedTime, isHourPassed]);
+
+  useEffect(() => {
+    setCurrency(selectedCurrency);
+  }, [selectedCurrency]);
 
   useEffect(() => {
     dispatch(setLastUpdatedTime(Date.now()));
   }, [dispatch]);
 
-  const isTablet = useMediaQuery({ query: '(max-width: 1279px' });
+  const isTablet = useMediaQuery({ query: '(max-width: 1279px)' });
   const isDesktop = useMediaQuery({ query: '(min-width: 1280px)' });
 
   return (
@@ -66,43 +67,34 @@ const Currency = () => {
         </CurrencyHeadWrapper>
 
         <CurrencyTableBodyList>
-          {currency?.length &&
-            currency.map(el => {
-              return (
-                <CurrencyTableBody key={nanoid()}>
-                  <CurrencyTableItem>{el.currencyName}</CurrencyTableItem>
-                  <CurrencyTableItem>{el.rateBuy.toFixed(2)}</CurrencyTableItem>
-                  <CurrencyTableItem>
-                    {el.rateSell.toFixed(2)}
-                  </CurrencyTableItem>
-                </CurrencyTableBody>
-              );
-            })}
+          {currency?.map(el => (
+            <CurrencyTableBody key={nanoid()}>
+              <CurrencyTableItem>{el.currencyName}</CurrencyTableItem>
+              <CurrencyTableItem>{el.rateBuy.toFixed(2)}</CurrencyTableItem>
+              <CurrencyTableItem>{el.rateSell.toFixed(2)}</CurrencyTableItem>
+            </CurrencyTableBody>
+          ))}
         </CurrencyTableBodyList>
       </CurrencyTable>
       <CurrecnyDiagram>
         {currency?.map(item => {
-          if (item.currencyCodeA === 840) {
+          if (item.currencyCodeA === '840') {
+            // Afișează USD
             return (
               <LowerNumber key={nanoid()}>
                 {Number(item.rateBuy).toFixed(2)}
               </LowerNumber>
             );
-          }
-          return [];
-        })}
-
-        {currency?.map(item => {
-          if (item.currencyCodeA === 978) {
+          } else if (item.currencyCodeA === '978') {
+            // Afișează EUR
             return (
               <HigherNumber key={nanoid()}>
                 {Number(item.rateBuy).toFixed(2)}
               </HigherNumber>
             );
           }
-          return [];
+          return null; // Pentru alte valute, dacă există, nu afișa nimic
         })}
-
         {isDesktop && <img src={image} alt="" />}
         {isTablet && <img src={imageTab} alt="" />}
       </CurrecnyDiagram>
