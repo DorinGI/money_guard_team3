@@ -10,10 +10,32 @@ import {
 
 const initialState = {
   categories: [],
-  items: [{ id: '1', date: '2024-01-01', type: 'income', category: 'Salary', comment: 'Monthly salary', sum: 3000 },
-  { id: '2', date: '2024-01-05', type: 'expense', category: 'Food', comment: 'Groceries', sum: 150 },
-  { id: '3', date: '2024-01-10', type: 'expense', category: 'Utilities', comment: 'Electric bill', sum: 100 },
-  ],//date de proba
+  items: [
+    {
+      id: '1',
+      date: '2024-01-01',
+      type: 'income',
+      category: 'Salary',
+      comment: 'Monthly salary',
+      sum: 3000,
+    },
+    {
+      id: '2',
+      date: '2024-01-05',
+      type: 'expense',
+      category: 'Food',
+      comment: 'Groceries',
+      sum: 150,
+    },
+    {
+      id: '3',
+      date: '2024-01-10',
+      type: 'expense',
+      category: 'Utilities',
+      comment: 'Electric bill',
+      sum: 100,
+    },
+  ], //date de proba
   isLoading: false,
   error: null,
   summary: [],
@@ -63,7 +85,6 @@ const transactionsSlice = createSlice({
         if (index !== -1) {
           state.items.splice(index, 1);
         }
-
       })
       .addCase(modifyTransaction.pending, state => {
         state.isLoading = true;
@@ -104,5 +125,8 @@ const transactionsSlice = createSlice({
       });
   },
 });
+
+export const { setTrasactionIdForDelete, setTrasactionForUpdate } =
+  transactionsSlice.actions;
 
 export const transactionsReducer = transactionsSlice.reducer;
