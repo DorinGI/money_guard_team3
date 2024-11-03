@@ -9,7 +9,7 @@ export const AdaptiveContainer = styled.div`
 
   @media only screen and (min-width: 768px) {
     max-width: 768px;
-    padding: 0 32px;
+    // padding: 0 32px;
   }
 
   @media only screen and (min-width: 1280px) {

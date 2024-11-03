@@ -10,32 +10,7 @@ import {
 
 const initialState = {
   categories: [],
-  items: [
-    {
-      id: '1',
-      date: '2024-01-01',
-      type: 'income',
-      category: 'Salary',
-      comment: 'Monthly salary',
-      sum: 3000,
-    },
-    {
-      id: '2',
-      date: '2024-01-05',
-      type: 'expense',
-      category: 'Food',
-      comment: 'Groceries',
-      sum: 150,
-    },
-    {
-      id: '3',
-      date: '2024-01-10',
-      type: 'expense',
-      category: 'Utilities',
-      comment: 'Electric bill',
-      sum: 100,
-    },
-  ], //date de proba
+  items: [],
   isLoading: false,
   error: null,
   summary: [],
@@ -97,7 +72,12 @@ const transactionsSlice = createSlice({
         state.isLoading = false;
         state.error = null;
         const index = state.items.findIndex(el => el.id === action.payload.id);
-        state.items.splice(index, 1, action.payload);
+        if (index !== -1) {
+          state.items[index] = {
+            ...state.items[index],
+            ...action.payload,
+          };
+        }
       })
       .addCase(fetchAllTransactions.pending, state => {
         state.isLoading = true;

@@ -20,7 +20,6 @@ import ModalDeleteTransaction from './common/components/ModalDeleteTransaction/M
 import ModalAddTransaction from './common/components/ModalAddTransaction/ModalAddTransaction';
 import ModalEditTransaction from './common/components/ModalEditTransaction/ModalEditTransaction';
 import LoadingSpinner from '../pages/common/components/LoadingSpinner/LoadingSpinner';
-import Balance from './common/components/Balance';
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -52,8 +51,6 @@ const HomePage = () => {
   return (
     <>
       <div className={`${styles.HomePage} ${animation}`}>
-        {!screenCondition && <Balance />}
-
         {screenCondition ? (
           <TransactionsTable
             data={data}

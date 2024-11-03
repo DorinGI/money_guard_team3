@@ -65,7 +65,7 @@ const EditTransactionForm = ({ closeModal }) => {
         transactionData: {
           transactionDate: startDate,
           type: isOnIncomeTab ? 'INCOME' : 'EXPENSE',
-          categoryId: values.category || 'Income',
+          categoryId: values.category || defaultIncomeCategoryId,
           comment: values.comment,
           amount: isOnIncomeTab ? values.amount : 0 - values.amount,
         },

@@ -15,6 +15,7 @@ export const StyledNavigation = styled.nav`
     align-items: flex-start;
     justify-content: flex-start;
     padding-top: 40px;
+    margin-left: 50px;
   }
 `;
 
