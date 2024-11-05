@@ -10,7 +10,7 @@ const StatisticsPage = () => {
   const [forcedLoading, setForcedLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setForcedLoading(false), 1500);
+    setTimeout(() => setForcedLoading(false), 700);
   }, [forcedLoading]);
 
   if (forcedLoading) {

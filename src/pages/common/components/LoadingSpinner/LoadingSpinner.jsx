@@ -10,7 +10,7 @@ const LoadingSpinner = () => {
       width="96"
       color="grey"
       strokeWidth="5"
-      animationDuration="0.75"
+      animationDuration="0.50"
       ariaLabel="rotating-lines-loading"
       wrapperClass={styles.loadingSpinner}
     />

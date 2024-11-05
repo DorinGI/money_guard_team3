@@ -1,6 +1,11 @@
 @import '../../../../sass/_common.scss';
 
-.loadingSpinner {
-  display: flex;
-  justify-content: center;
+/* Adaugă aceste stiluri în fișierul CSS al lui LoadingSpinner */
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  /* pentru a se asigura că este deasupra altor elemente */
 }
