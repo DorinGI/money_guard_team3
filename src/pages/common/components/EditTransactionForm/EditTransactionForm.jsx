@@ -25,6 +25,8 @@ import { FiCalendar } from 'react-icons/fi';
 // Înregistram localizarea pentru utilizarea în componenta ReactDatePicker
 registerLocale('en-US', enUS);
 
+const defaultIncomeCategoryId = getTransactionId('Income');
+
 const EditTransactionForm = ({ closeModal }) => {
   const transactionForUpdate = useSelector(selectTransactionForUpdate);
   console.log('Selected transaction for update:', transactionForUpdate);

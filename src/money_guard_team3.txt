@@ -1,0 +1,4443 @@
+File: D:\dorin\money_guard_team3\src\index.js 
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+// import { ToastContainer } from 'react-toastify';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor, store } from './redux/store';
+// import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <BrowserRouter basename="/money_guard_team3">
+        <App />
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>
+);
+File: D:\dorin\money_guard_team3\src\App.jsx 
+import React, { useEffect } from 'react';
+import { PrivateRoute } from './routes/PrivateRoute';
+import { RestrictedRoute } from './routes/RestrictedRoute';
+import { SharedLayout } from './pages/common/components/SharedLayout/SharedLayout';
+import { Navigate, Routes, Route } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
+// import LoadingSpinner from './pages/common/components/LoadingSpinner/LoadingSpinner';
+// import Sidebar from './pages/common/components/Sidebar';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+import StatisticsPage from './pages/StatisticsPage';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectIsRefreshing } from './redux/auth/selectors';
+import { selectIsLoading } from './redux/globalSelectors';
+import { refreshUser } from './redux/auth/operations';
+import LoadingSpinner from './pages/common/components/LoadingSpinner/LoadingSpinner';
+import RegistrationPage from './pages/RegistrationPage';
+import DashboardPage from './pages/DashboardPage';
+import CurrencyPage from './pages/CurrencyPage';
+// import Login from './pages/Login';
+// import Header from './pages/common/components/Header';
+// import styles from './App.module.css';
+
+const App = () => {
+  // debugger;
+  const dispatch = useDispatch();
+  const isRefreshing = useSelector(selectIsRefreshing);
+  const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const isLoading = useSelector(selectIsLoading);
+
+  useEffect(() => {
+    dispatch(refreshUser());
+  }, [dispatch]);
+
+  return isRefreshing ? (
+    <LoadingSpinner visible={isLoading} />
+  ) : (
+    <>
+      <Routes>
+        <Route path="/" element={<SharedLayout />}>
+          <Route
+            index
+            element={
+              <RestrictedRoute
+                redirectTo="/dashboard"
+                component={<LoginPage />}
+              />
+            }
+          />
+          <Route
+            path="register"
+            element={
+              <RestrictedRoute
+                redirectTo="/dashboard"
+                component={<RegistrationPage />}
+              />
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <RestrictedRoute
+                redirectTo="/dashboard"
+                component={<LoginPage />}
+              />
+            }
+          />
+          <Route
+            path="dashboard"
+            element={
+              <PrivateRoute redirectTo="/login" component={<DashboardPage />} />
+            }
+          >
+            <Route index element={<HomePage />} />
+            <Route path="home" element={<HomePage />} />
+            <Route path="statistics" element={<StatisticsPage />} />
+            <Route
+              path="currency"
+              element={
+                isTabletOrDesktop ? <Navigate to="/" /> : <CurrencyPage />
+              }
+            />
+          </Route>
+        </Route>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+      {/* <LoadingSpinner visible={isLoading} /> */}
+      {/* <div className={styles.section}>
+        <header className={styles.header}>{<Header />}</header>
+        <div className={styles.mainContainer}>
+          <Sidebar />
+          <div style={{ flex: 1, padding: '20px' }}>
+            <Routes>
+              <Route path="/register" element={<RegistrationPage />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/statistics" element={<StatisticsPage />} />
+            </Routes>
+          </div>
+        </div>
+      </div> */}
+    </>
+  );
+  // return (
+  //   <div className={styles.appContainer}>
+  //     <h1>Money Guard</h1>
+  //     <header className={styles.header}>{token && <UserMenu />}</header>
+  //     <header className={styles.header}>{<Header />}</header>
+  //     <Routes>
+  //       <Route path="/login" element={<Login />} />
+  //       <Route path="/register" element={<Register />} />
+  //       <Route path="*" element={<Login />} />
+  //       <Route
+  //         path="/contacts"
+  //         element={token ? <Contacts /> : <Navigate to="/login" replace />}
+  //       />
+  //       <Route path="/home" element={<MenuCurencyPage />} />
+  //     </Routes>
+  //   </div>
+  // );
+};
+
+export default App;
+File: D:\dorin\money_guard_team3\src\pages\CurrencyPage.jsx 
+import React from 'react';
+import Currency from './common/components/Currency/Currency';
+
+const CurrencyPage = () => {
+  return (
+    <>
+      <Currency />
+    </>
+  );
+};
+
+export default CurrencyPage;
+File: D:\dorin\money_guard_team3\src\pages\DashboardPage.jsx 
+import React, { useEffect } from 'react';
+import Header from './common/components/Header';
+import Navigation from './common/components/Navigation/Navigation';
+import { Outlet, useLocation } from 'react-router-dom';
+import Balance from './common/components/Balance';
+import Container from './common/components/Container/Container';
+import {
+  DashboardContainer,
+  GradientLeftBottom,
+  GradientLeftTop,
+  GradientRightBottom,
+  GradientRightTop,
+  LeftContainer,
+  NavAndBalanceWrapper,
+  SectionContainer,
+} from './DashboardPage.styled';
+import { useMediaQuery } from 'react-responsive';
+import CurrencyPage from './CurrencyPage';
+import { useDispatch } from 'react-redux';
+import {
+  fetchAllTransactions,
+  // getTransactionsCategories,
+} from '../redux/transactions/operations';
+
+function DashboardPage() {
+  const dispatch = useDispatch();
+
+  const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const location = useLocation();
+  const currentPage = location.pathname
+    .replace('dashboard', '')
+    .replaceAll('/', '');
+
+  useEffect(() => {
+    // dispatch(getTransactionsCategories());
+    dispatch(fetchAllTransactions());
+  }, [dispatch]);
+
+  return (
+    <SectionContainer>
+      <Header />
+      <Container>
+        <DashboardContainer>
+          <GradientLeftTop />
+          <GradientLeftBottom />
+          {isTabletOrDesktop && (
+            <>
+              <GradientRightBottom />
+              <GradientRightTop />
+            </>
+          )}
+          <LeftContainer>
+            <NavAndBalanceWrapper>
+              <Navigation />
+              {!isTabletOrDesktop &&
+                (currentPage === 'home' || currentPage === '') && <Balance />}
+              {isTabletOrDesktop && <Balance />}
+            </NavAndBalanceWrapper>
+            {isTabletOrDesktop && <CurrencyPage />}
+          </LeftContainer>
+          {/*       <Suspense fallback={<Loader/>}>*/}
+          <Outlet />
+          {/*   </Suspense>*/}
+        </DashboardContainer>
+      </Container>
+    </SectionContainer>
+  );
+}
+
+export default DashboardPage;
+File: D:\dorin\money_guard_team3\src\pages\DashboardPage.styled.jsx 
+import styled from 'styled-components';
+import bcg from '../images/gradient.webp';
+
+export const SectionContainer = styled.section`
+  overflow: clip;
+  min-height: 100vh;
+  background-image: url(${bcg});
+  background-position: top;
+
+  @media only screen and (min-width: 768px) {
+    height: 100vh;
+    background-image: none;
+  }
+`;
+
+export const DashboardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+
+  @media only screen and (min-width: 768px) {
+    gap: 20px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    flex-direction: row;
+    height: calc(100vh - 80px);
+    gap: 0;
+  }
+`;
+
+export const GradientRightBottom = styled.div`
+  z-index: -20;
+  position: absolute;
+  width: 362.381px;
+  height: 362.381px;
+  border-radius: 362.381px;
+  background: linear-gradient(220deg, #6d54eb 28.31%, #652392 66.76%);
+  filter: blur(121.80889129638672px);
+  top: 241.62px;
+  left: 122.29px;
+
+  @media only screen and (min-width: 768px) {
+    width: 893px;
+    height: 901px;
+    border-radius: 901px;
+    background: linear-gradient(
+      220deg,
+      rgba(109, 84, 235, 0.6) 28.31%,
+      rgba(101, 35, 146, 0.6) 66.76%
+    );
+    filter: blur(200px);
+    top: 450px;
+    left: 298px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    width: 893px;
+    height: 901px;
+    border-radius: 901px;
+    background: linear-gradient(
+      220deg,
+      rgba(109, 84, 235, 0.6) 28.31%,
+      rgba(101, 35, 146, 0.6) 66.76%
+    );
+    top: 197px;
+    left: 682px;
+  }
+`;
+
+export const GradientRightTop = styled.div`
+  z-index: -20;
+  position: absolute;
+  width: 539px;
+  height: 539px;
+  border-radius: 539px;
+  background: rgba(47, 21, 176, 0.73);
+  filter: blur(100px);
+
+  @media only screen and (min-width: 768px) {
+    width: 549px;
+    height: 554px;
+    border-radius: 554px;
+    background: linear-gradient(211deg, #652392 39.99%, #341fa0 59.67%);
+    filter: blur(150px);
+    top: -246px;
+    left: 314px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    width: 363px;
+    height: 366.105px;
+    border-radius: 366.105px;
+    background: #302e8e;
+    top: 71.43px;
+    left: 1113px;
+  }
+`;
+
+export const GradientLeftBottom = styled.div`
+  z-index: -20;
+  position: absolute;
+  width: 454px;
+  height: 454px;
+  border-radius: 454px;
+  background: rgba(47, 21, 176, 0.73);
+  filter: blur(100px);
+  top: -9px;
+  right: -87px;
+
+  @media only screen and (min-width: 768px) {
+    width: 819px;
+    height: 825px;
+    border-radius: 825px;
+    background: linear-gradient(
+      207deg,
+      rgba(52, 31, 160, 0.8) 46.11%,
+      rgba(101, 35, 146, 0.8) 63.65%
+    );
+    filter: blur(200px);
+    top: 529px;
+    right: 245px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    width: 760px;
+    height: 766px;
+    border-radius: 766px;
+    background: linear-gradient(207deg, #341fa0 46.11%, #652392 63.65%);
+    top: 189px;
+    right: 700px;
+  }
+`;
+
+export const GradientLeftTop = styled.div`
+  z-index: -20;
+  position: absolute;
+  width: 434.249px;
+  height: 434.249px;
+  border-radius: 434.249px;
+  background: linear-gradient(
+    220deg,
+    rgba(109, 84, 235, 0.73) 28.31%,
+    rgba(101, 35, 146, 0.73) 66.76%
+  );
+  filter: blur(121.80889129638672px);
+  top: -244px;
+  right: 166.75px;
+
+  @media only screen and (min-width: 768px) {
+    width: 739px;
+    height: 745px;
+    border-radius: 745px;
+    background: linear-gradient(
+      220deg,
+      rgba(109, 84, 235, 0.6) 28.31%,
+      rgba(101, 35, 146, 0.6) 66.76%
+    );
+    filter: blur(200px);
+    top: -46px;
+    right: 500px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    width: 739px;
+    height: 745px;
+    border-radius: 745px;
+    background: linear-gradient(
+      220deg,
+      rgba(109, 84, 235, 0.6) 28.31%,
+      rgba(101, 35, 146, 0.6) 66.76%
+    );
+    top: -210.29px;
+    right: 748px;
+  }
+`;
+
+export const NavAndBalanceWrapper = styled.div`
+  @media only screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    width: calc(50% - 16px);
+  }
+
+  @media only screen and (min-width: 1280px) {
+    width: 100%;
+  }
+`;
+
+export const LeftContainer = styled.div`
+  @media only screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 32px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    flex-direction: column;
+    width: 464px;
+    position: relative;
+    height: calc(100vh - 80px);
+
+    &::after {
+      content: '';
+      width: 1px;
+      height: 100%;
+      position: absolute;
+      right: 0;
+      background-color: var(--transparency-60);
+    }
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\HomePage.jsx 
+import { useEffect, useState } from 'react';
+
+import { ButtonAddTransactions } from './common/components/AddButton/AddButton';
+
+import TransactionsList from './common/components/TransactionsList';
+import TransactionsTable from './common/components/TransactionsTable/TransactionsTable';
+import { useMediaQuery } from 'react-responsive';
+import styles from './HomePage.module.css';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAllTransactions } from '../redux/transactions/selectors';
+import { fetchAllTransactions } from '../redux/transactions/operations';
+import {
+  selectIsAddModalOpen,
+  openAddModal,
+  closeAddModal,
+} from '../redux/Modals/slice';
+
+import ModalDeleteTransaction from './common/components/ModalDeleteTransaction/ModalDeleteTransaction';
+import ModalAddTransaction from './common/components/ModalAddTransaction/ModalAddTransaction';
+import ModalEditTransaction from './common/components/ModalEditTransaction/ModalEditTransaction';
+import LoadingSpinner from '../pages/common/components/LoadingSpinner/LoadingSpinner';
+
+const HomePage = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAllTransactions());
+  }, [dispatch]);
+
+  const data = useSelector(selectAllTransactions);
+
+  const isAddModalOpen = useSelector(selectIsAddModalOpen);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setisEditModalOpen] = useState(false);
+
+  const screenCondition = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const [forcedLoading, setForcedLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setForcedLoading(false), 1500);
+  }, [forcedLoading]);
+
+  if (forcedLoading) {
+    return <LoadingSpinner />;
+  }
+
+  const animation = 'animate__animated  animate__fadeIn animate__slow';
+
+  return (
+    <>
+      <div className={`${styles.HomePage} ${animation}`}>
+        {screenCondition ? (
+          <TransactionsTable
+            data={data}
+            openDeleteModal={() => setIsDeleteModalOpen(true)}
+            openEditModal={() => setisEditModalOpen(true)}
+          />
+        ) : (
+          <TransactionsList
+            data={data}
+            openDeleteModal={() => setIsDeleteModalOpen(true)}
+            openEditModal={() => setisEditModalOpen(true)}
+          />
+        )}
+
+        <ButtonAddTransactions onClick={() => dispatch(openAddModal())} />
+      </div>
+
+      <>
+        {isAddModalOpen && (
+          <ModalAddTransaction closeModal={() => dispatch(closeAddModal())} />
+        )}
+
+        {isDeleteModalOpen && (
+          <ModalDeleteTransaction
+            closeModal={() => setIsDeleteModalOpen(false)}
+          />
+        )}
+
+        {isEditModalOpen && (
+          <ModalEditTransaction closeModal={() => setisEditModalOpen(false)} />
+        )}
+      </>
+    </>
+  );
+};
+
+export default HomePage;
+File: D:\dorin\money_guard_team3\src\pages\LoginPage.jsx 
+import LoginForm from './common/components/LoginForm';
+import React from 'react';
+import imageMob from '../images/mobileLogin.webp';
+import imageTablet from '../images/tabletLogin.webp';
+import imageDesk from '../images/desctopLogin.webp';
+import styled from 'styled-components';
+
+const LoginPage = () => {
+  return (
+    <StyledBox>
+      <LoginForm />
+    </StyledBox>
+  );
+};
+
+export default LoginPage;
+
+const StyledBox = styled.div`
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(${imageMob});
+  background-color: #101010;
+  height: 100vh;
+
+  @media only screen and (min-width: 768px) {
+    background-image: url(${imageTablet});
+  }
+
+  @media only screen and (min-width: 1280px) {
+    background-image: url(${imageDesk});
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\LogoutPage.jsx 
+import React from "react";
+import ModalLogout from "components/ModalLogout/ModalLogout";
+
+
+export const LogoutPage = () => {
+  return (
+    <>
+    <ModalLogout/>
+    </>
+  )
+}
+
+export default LogoutPage
+File: D:\dorin\money_guard_team3\src\pages\RegistrationPage.jsx 
+import styled from 'styled-components';
+import RegistrationForm from '../pages/common/components/RegistrationForm/RegistrationForm';
+import React from 'react';
+import imageMob from '../images/mobileRegistr.webp';
+import imageTablet from '../images/tabletRegistr.webp';
+import imageDesk from '../images/desctopRegister.webp';
+
+const RegistrationPage = () => {
+  return (
+    <StyledBox>
+      <RegistrationForm />
+    </StyledBox>
+  );
+};
+
+export default RegistrationPage;
+
+const StyledBox = styled.div`
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url(${imageMob});
+  background-color: #101010;
+  height: 100vh;
+
+  @media only screen and (min-width: 768px) {
+    background-image: url(${imageTablet});
+  }
+
+  @media only screen and (min-width: 1280px) {
+    background-image: url(${imageDesk});
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\StatisticsPage.jsx 
+import styles from "./StatisticsPage.module.css"; 
+import { useEffect, useState } from "react";
+
+import StatisticsDashboard from "../pages/common/components/StatisticsDashboard/StatisticsDashboard";
+import StatisticsTable from "../pages/common/components/StatisticsTable/StatisticsTable";
+import StatisticsChart from "../pages/common/components/StatisticsChart/StatisticsChart";
+import LoadingSpinner from "../pages/common/components/LoadingSpinner/LoadingSpinner";
+
+const StatisticsPage = () => {
+  const [forcedLoading, setForcedLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setForcedLoading(false), 1500);
+  }, [forcedLoading]);
+
+  if (forcedLoading) {
+    return (
+      <div className={styles.spinnerContainer}>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.statisticsPage}>
+      <div className={styles.titleAndChart}>
+        <h1 className={styles.title}>Statistics</h1>
+        <StatisticsChart />
+      </div>
+
+      <div className={styles.dashboardAndTable}>
+        <StatisticsDashboard />
+        <StatisticsTable />
+      </div>
+    </div>
+  );
+};
+
+export default StatisticsPage;
+File: D:\dorin\money_guard_team3\src\pages\common\components\formatNumberWithSpaces.js 
+/** 
+Funcție auxiliară pentru formatrarea numarului afisat in balanta si in Sum (amount). 
+-Se grupeaza cate de 3 cifre despartite de un mic spatiu.
+-Limitare la 2 zecimale.
+*/
+
+export function formatNumberWithSpaces(number) {
+  // Limităm numărul la două zecimale:
+  const roundedNumber = Number(number).toFixed(2);
+
+  // Separăm partea întreagă de cea zecimală:
+  const parts = roundedNumber.split(".");
+
+  // Formatăm partea întreagă cu spații:
+  const integerPartWithSpaces = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+  // Returnăm numărul formatat cu spații și două zecimale:
+  return `${integerPartWithSpaces}.${parts[1]}`;
+}
+File: D:\dorin\money_guard_team3\src\pages\common\components\LoginForm.styled.js 
+import { MdEmail } from 'react-icons/md';
+import { IoMdLock } from 'react-icons/io';
+import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
+import { VscEye, VscEyeClosed } from 'react-icons/vsc';
+
+export const StyledBoxForm = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 23px 20px;
+  background: var(--Form-color, rgba(255, 255, 255, 0.1));
+
+  @media only screen and (min-width: 768px) {
+    width: 533px;
+    height: 570px;
+    padding: 80px 62px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+
+    &::before {
+      content: '';
+      backdrop-filter: blur(50px);
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 8px;
+      box-shadow: 0px 4px 60px 0px rgba(0, 0, 0, 0.25);
+    }
+  }
+`;
+
+export const Gradient = styled.div`
+  @media only screen and (min-width: 768px) {
+    z-index: -20;
+    position: absolute;
+    width: 454px;
+    height: 454px;
+    border-radius: 454px;
+    background: rgba(47, 21, 176, 0.73);
+    filter: blur(100px);
+    inset: 0;
+    margin: 0 auto;
+  }
+`;
+
+export const StyledIcon = styled.svg`
+  font-size: 25px;
+  @media only screen and (min-width: 768px) {
+    width: 35px;
+    height: 35px;
+  }
+`;
+
+export const StyledTitle = styled.p`
+  color: var(--white, #fbfbfb);
+  font-size: 19px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 52px;
+  @media only screen and (min-width: 768px) {
+    font-size: 26.963px;
+  }
+`;
+
+export const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  min-width: 100%;
+`;
+
+export const StyledLabel = styled.label`
+  color: rgba(156, 163, 175, 1);
+  max-width: 100%;
+  position: relative;
+  height: 45px;
+  margin-bottom: 40px;
+`;
+
+export const StyledInputBox = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  border-bottom: 1px solid var(--white-40, rgba(255, 255, 255, 0.4));
+
+  max-width: 100%;
+  width: 280px;
+
+  @media only screen and (min-width: 768px) {
+    width: 409px;
+  }
+`;
+
+export const StyledEmailIcon = styled(MdEmail)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 24px;
+  margin-left: 12px;
+`;
+
+export const StyledPasswordIcon = styled(IoMdLock)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 24px;
+  margin-left: 12px;
+`;
+
+export const StyledInputField = styled.input`
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  padding: 5px 11px;
+  position: relative;
+`;
+
+export const StyledEye = styled.button`
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  background-color: transparent;
+  border: none;
+`;
+
+export const StyledNoEyeIcon = styled(VscEyeClosed)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 25px;
+`;
+
+export const StyledEyeIcon = styled(VscEye)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 27px;
+`;
+
+export const StyledErr = styled.p`
+  margin-left: 12px;
+  padding-top: 6px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+export const StyledLogin = styled.button`
+  border-radius: 20px;
+  max-height: 50px;
+  padding: 13px 0;
+  background: var(
+    --button-gradient,
+    linear-gradient(97deg, #ffc727 -16.42%, #9e40ba 97.04%, #7000ff 150.71%)
+  );
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  border: none;
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  color: var(--white, #fbfbfb);
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  max-width: 280px;
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+  @media only screen and (min-width: 768px) {
+    max-width: 300px;
+  }
+`;
+
+export const StyledLink = styled(NavLink)`
+  width: 100%;
+  max-width: 280px;
+  max-height: 50px;
+  padding: 13px 0;
+  outline: transparent;
+  cursor: pointer;
+  margin-top: 20px;
+
+  color: rgba(98, 63, 139, 1);
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+
+  border-radius: 20px;
+  background: #fcfcfc;
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+  @media only screen and (min-width: 768px) {
+    max-width: 300px;
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\common\components\TransactionConstants.js 
+const transactionCategories = [
+  {
+    id: "c9d9e447-1b83-4238-8712-edc77b18b739",
+    name: "Main expenses",
+    type: "EXPENSE",
+  },
+  {
+    id: "27eb4b75-9a42-4991-a802-4aefe21ac3ce",
+    name: "Products",
+    type: "EXPENSE",
+  },
+  {
+    id: "128673b5-2f9a-46ae-a428-ec48cf1effa1",
+    name: "Household products",
+    type: "EXPENSE",
+  },
+  {
+    id: "3caa7ba0-79c0-40b9-ae1f-de1af1f6e386",
+    name: "Car",
+    type: "EXPENSE",
+  },
+  {
+    id: "bbdd58b8-e804-4ab9-bf4f-695da5ef64f4",
+    name: "Self care",
+    type: "EXPENSE",
+  },
+  {
+    id: "76cc875a-3b43-4eae-8fdb-f76633821a34",
+    name: "Child care",
+    type: "EXPENSE",
+  },
+  {
+    id: "1272fcc4-d59f-462d-ad33-a85a075e5581",
+    name: "Education",
+    type: "EXPENSE",
+  },
+  {
+    id: "c143130f-7d1e-4011-90a4-54766d4e308e",
+    name: "Leisure",
+    type: "EXPENSE",
+  },
+  {
+    id: "3acd0ecd-5295-4d54-8e7c-d3908f4d0402",
+    name: "Entertainment",
+    type: "EXPENSE",
+  },
+  {
+    id: "719626f1-9d23-4e99-84f5-289024e437a8",
+    name: "Other expenses",
+    type: "EXPENSE",
+  },
+  {
+    id: "063f1132-ba5d-42b4-951d-44011ca46262",
+    name: "Income",
+    type: "INCOME",
+  },
+];
+
+const getTransactionId = (transactionCategory) => {
+  const transactionTargeted = transactionCategories.find(
+    (item) => item.name === transactionCategory
+  );
+
+  return transactionTargeted.id;
+};
+
+const getTransactionCategory = (transactionId) => {
+  const transactionTargeted = transactionCategories.find(
+    (item) => item.id === transactionId
+  );
+
+  return transactionTargeted.name;
+};
+
+const formatData = (unixData) => {
+  const year = new Date(unixData).getFullYear();
+  const month = new Date(unixData).getMonth() + 1;
+  const day = new Date(unixData).getDate();
+
+  const doubleDigitsFormatmonth = String(month).padStart(2, 0);
+  const doubleDigitsFormatDay = String(day).padStart(2, 0);
+
+  return `${doubleDigitsFormatDay}.${doubleDigitsFormatmonth}.${year}`;
+};
+
+const Months_OPTIONS = [
+  { value: 1, label: "January" },
+  { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
+];
+
+const CURRENT_YEAR = new Date().getFullYear();
+
+const YEARS_OPTIONS = [CURRENT_YEAR, CURRENT_YEAR - 1, CURRENT_YEAR - 2];
+
+const getTrasactionCategoryColor = (category) => {
+  switch (category) {
+    case "Main expenses":
+      return "rgba(254, 208, 87, 1)";
+
+    case "Products":
+      return "rgba(255, 0, 255, 1)";
+
+    case "Car":
+      return "rgba(253, 148, 152, 1)";
+
+    case "Self care":
+      return "rgba(197, 186, 255, 1)";
+
+    case "Child care":
+      return "rgba(127, 255, 0, 1)";
+
+    case "Household products":
+      return "rgba(74, 86, 226, 1)";
+
+    case "Education":
+      return "rgba(0, 255, 255, 1)";
+
+    case "Leisure":
+      return "rgba(255, 119, 0, 1)";
+
+    case "Other expenses":
+      return "rgba(0, 173, 132, 1)";
+
+    case "Entertainment":
+      return "rgba(177, 15, 72, 1)";
+
+    default:
+      return "rgb(128, 128, 128)";
+  }
+};
+
+export {
+  transactionCategories,
+  getTransactionId,
+  getTransactionCategory,
+  formatData,
+  Months_OPTIONS,
+  YEARS_OPTIONS,
+  getTrasactionCategoryColor,
+};
+File: D:\dorin\money_guard_team3\src\pages\common\components\Balance.jsx 
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectBalance } from '../../../redux/auth/selectors';
+import { getUserInfo } from '../../../redux/auth/operations';
+import styles from './Balance.module.css';
+
+function formatNumberWithSpaces(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function Balance() {
+  const dispatch = useDispatch();
+  const balance = useSelector(selectBalance);
+
+  useEffect(() => {
+    dispatch(getUserInfo());
+  }, [dispatch]);
+
+  return (
+    <div className={styles.balanceContainer}>
+      <h3>Your Balance</h3>
+      <p>
+        ₴{' '}
+        <span>
+          {balance ? formatNumberWithSpaces(balance.toFixed(2)) : '0.00'}
+        </span>
+      </p>
+    </div>
+  );
+}
+
+export default Balance;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Header.jsx 
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUserName } from '../../../redux/auth/selectors';
+import { useMediaQuery } from 'react-responsive';
+// import { logout } from '../redux/authSlice';
+import sprite from '../../../images/icons/sprite.svg';
+import styles from './Header.module.css';
+import ModalLogout from './ModalLogout/ModalLogout';
+
+const Header = ({ closeModal = null }) => {
+  const userName = useSelector(selectUserName);
+  const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function handleLogout() {
+    !closeModal ? setIsModalOpen(true) : closeModal(false);
+  }
+
+  return (
+    <div className={styles.headerContainerOutside}>
+      <div className={styles.headerContainer}>
+        <Link to="/home">
+          <svg width="17" height="17">
+            <use href={`${sprite}#icon-logo`} />
+          </svg>
+          <p>Money Guard</p>
+        </Link>
+        <div className={styles.userContainer}>
+          <span className={styles.userInfo}>{userName}</span>
+          {isModalOpen && <ModalLogout closeModal={setIsModalOpen} />}
+          <button className={styles.logoutButton} onClick={handleLogout}>
+            <svg width="17" height="17">
+              <use href={`${sprite}#icon-exit`}></use>
+            </svg>
+            {isTabletOrDesktop && <p>Exit</p>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Header;
+File: D:\dorin\money_guard_team3\src\pages\common\components\LoginForm.jsx 
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { loginThunk } from '../../../redux/auth/operations';
+import icons from '../../../images/icons/icons.svg';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import {
+  Gradient,
+  StyledBoxForm,
+  StyledEmailIcon,
+  StyledErr,
+  StyledEye,
+  StyledEyeIcon,
+  StyledForm,
+  StyledIcon,
+  StyledInputBox,
+  StyledInputField,
+  StyledLabel,
+  StyledLink,
+  StyledLogin,
+  StyledNoEyeIcon,
+  StyledPasswordIcon,
+  StyledTitle,
+} from './LoginForm.styled';
+import { toast } from 'react-toastify';
+
+const userSchema = yup.object().shape({
+  email: yup.string().email('Please enter a valid email!').required('Required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters!')
+    .max(12, 'Password must be at most 12 characters')
+    .required('Required'),
+});
+
+const LoginForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(userSchema),
+  });
+
+  const dispatch = useDispatch();
+
+  const [showPass, setShowPass] = useState(false);
+  const togglePassVisibility = () => setShowPass(!showPass);
+  const thisEye = !showPass ? { type: 'password' } : { type: 'text' };
+
+  const submit = data => {
+    dispatch(loginThunk(data))
+      .unwrap()
+      .then(res => {
+        toast.success(`Welcome ${res.user.username}!`);
+      })
+      .catch(err => {
+        toast.error('Login failed. Please check your credentials.');
+      });
+
+    reset();
+  };
+
+  return (
+    <StyledBoxForm>
+      <Gradient />
+      <StyledForm onSubmit={handleSubmit(submit)}>
+        <StyledIcon width={25} height={25}>
+          <use href={`${icons}#icon-Logo`} />
+        </StyledIcon>
+        <StyledTitle>Money Guard</StyledTitle>
+        <StyledLabel>
+          <StyledInputBox>
+            <StyledEmailIcon width={24} height={24} />
+            <StyledInputField
+              {...register('email')}
+              placeholder="E-mail"
+              type="text"
+              name="email"
+            />
+          </StyledInputBox>
+          <StyledErr>{errors.email?.message}</StyledErr>
+        </StyledLabel>
+        <StyledLabel>
+          <StyledInputBox>
+            <StyledPasswordIcon width={24} height={24} />
+
+            <StyledInputField
+              {...register('password')}
+              placeholder="Password"
+              name="password"
+              {...thisEye}
+            />
+            <StyledEye type="button" onClick={togglePassVisibility}>
+              {!showPass ? <StyledEyeIcon /> : <StyledNoEyeIcon />}
+            </StyledEye>
+          </StyledInputBox>
+          <StyledErr>{errors.password?.message}</StyledErr>
+        </StyledLabel>
+        <StyledLogin type="submit">Log in</StyledLogin>
+
+        <StyledLink to="/register">Register</StyledLink>
+      </StyledForm>
+    </StyledBoxForm>
+  );
+};
+
+export default LoginForm;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Logout.jsx 
+import styles from './Logout.module.css';
+import { useMediaQuery } from 'react-responsive';
+
+import FormButton from '../common/FormButton/FormButton';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/Auth/operations';
+import { Icon } from '../../Icons';
+import useMedia from '../../hooks/useMedia';
+
+const Logout = ({ closeModal }) => {
+  const dispatch = useDispatch();
+  const { isMobile } = useMedia();
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    const addCloseEvent = event => {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('keydown', addCloseEvent);
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.removeEventListener('keydown', addCloseEvent);
+    };
+  }, [closeModal]);
+
+  const closeOnClickOutside = event => {
+    if (event.currentTarget === event.target) {
+      closeModal();
+    }
+  };
+
+  const screenCondition = useMediaQuery({ query: '(min-width: 768px)' });
+
+  return (
+    <div className={styles.logout} onClick={closeOnClickOutside}>
+      <div className={styles.logoutModal}>
+        {!isMobile && (
+          <div className={styles.close} onClick={() => closeModal()}>
+            {/* Insert icon or "X" text for close button */}
+          </div>
+        )}
+
+        {screenCondition && (
+          <Icon id="#icon-logo_tab_desk" className={styles.homeIcon} />
+        )}
+
+        <p>Are you sure you want to log out?</p>
+
+        <div className={styles.button}>
+          <FormButton
+            type={'button'}
+            text={'Logout'}
+            variant={'multiColorButton'}
+            handlerFunction={() => dispatch(logout())}
+          />
+          <FormButton
+            type={'button'}
+            text={'Cancel'}
+            variant={'whiteButton'}
+            handlerFunction={() => closeModal()}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Logout;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Sidebar.jsx 
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import Balance from './Balance';
+import CurrencyChart from './CurencyChart';
+import sprite from '../../../images/icons/sprite.svg';
+import styles from './Sidebar.module.css';
+
+function Sidebar() {
+  return (
+    <div className={styles.sidebarContainer}>
+      <nav>
+        <ul>
+          <li className={styles.navHome}>
+            <NavLink
+              to="/home"
+              aria-current="page"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLinkActive}` : styles.navLinkInaktive
+              }
+            >
+              <svg>
+                <use href={`${sprite}#icon-home`} />
+              </svg>
+              <p>Home</p>
+            </NavLink>
+          </li>
+          <li className={styles.navStatistics}>
+            <NavLink
+              to="/statistics"
+              className={({ isActive }) =>
+                isActive ? `${styles.navLinkActive}` : styles.navLinkInaktive
+              }
+            >
+              <svg>
+                <use href={`${sprite}#icon-statistics`} />
+              </svg>
+              <p>Statistics</p>
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+      <Balance />
+      <CurrencyChart />
+    </div>
+  );
+}
+
+export default Sidebar;
+File: D:\dorin\money_guard_team3\src\pages\common\components\TransactionItem.jsx 
+import styles from './TransactionsItem.module.css';
+import icons from '../../../images/icons/sprite.svg';
+import { formatData, getTransactionCategory } from './TransactionConstants';
+import { useDispatch } from 'react-redux';
+import {
+  setTrasactionForUpdate,
+  setTrasactionIdForDelete,
+} from '../../../redux/transactions/slice';
+import { formatNumberWithSpaces } from './formatNumberWithSpaces';
+
+const TransactionItem = ({ transaction, openDeleteModal, openEditModal }) => {
+  const { type, categoryId, comment, amount, transactionDate } = transaction;
+
+  const dispatch = useDispatch();
+
+  const handleDeleteClick = () => {
+    openDeleteModal();
+    dispatch(setTrasactionIdForDelete(transaction.id));
+  };
+
+  const handleEditClick = () => {
+    openEditModal();
+    dispatch(
+      setTrasactionForUpdate({
+        id: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        comment: transaction.comment,
+        categoryId: transaction.categoryId,
+        transactionDate: transaction.transactionDate,
+      })
+    );
+  };
+
+  let textClass = '';
+  let borderClass = '';
+
+  // Determine class based on data
+  if (type === 'INCOME') {
+    textClass = styles.incomeText; // Access class from CSS module
+    borderClass = styles.incomeBorder;
+  } else if (type === 'EXPENSE') {
+    textClass = styles.expenseText;
+    borderClass = styles.expenseBorder;
+  }
+
+  return (
+    <li className={`${styles.TransactionItem} ${borderClass}`}>
+      <div className={`${styles.row} ${styles.firstRow}`}>
+        <span className={styles.fixData}>Date</span>
+        <span className={styles.dynamicData}>
+          {formatData(transactionDate)}
+        </span>
+      </div>
+      <div className={`${styles.row} ${styles.secondRow}`}>
+        <span className={styles.fixData}>Type</span>
+        <span className={styles.dynamicData}>
+          {type === 'INCOME' ? '+' : '-'}
+        </span>
+      </div>
+      <div className={`${styles.row} ${styles.thirdRow}`}>
+        <span className={styles.fixData}>Category</span>
+        <span className={styles.dynamicData}>
+          {getTransactionCategory(categoryId)}
+        </span>
+      </div>
+      <div className={`${styles.row} ${styles.forthRow}`}>
+        <span className={styles.fixData}>Comment</span>
+        <span className={styles.dynamicData}>{comment}</span>
+      </div>
+      <div className={`${styles.row} ${styles.fifthRow}`}>
+        <span className={styles.fixData}>Sum</span>
+        <span className={`${styles.dynamicData} ${textClass}`}>
+          {type === 'INCOME'
+            ? formatNumberWithSpaces(amount)
+            : formatNumberWithSpaces(amount * -1)}
+        </span>
+      </div>
+      <div className={`${styles.row} ${styles.sixthRow}`}>
+        <button
+          type="button"
+          className={styles.deleteButton}
+          onClick={handleDeleteClick}
+        >
+          Delete
+        </button>
+        <button
+          className={styles.editButton}
+          type="button"
+          onClick={handleEditClick}
+        >
+          <svg className={styles.editIcon}>
+            <use href={`${icons}#icon-edit`}></use>
+          </svg>
+          <span className={styles.editText}>Edit</span>
+        </button>
+      </div>
+    </li>
+  );
+};
+
+export default TransactionItem;
+File: D:\dorin\money_guard_team3\src\pages\common\components\TransactionsList.jsx 
+import TransactionItem from './TransactionItem';
+import styles from './TransactionsList.module.css';
+
+const TransactionsList = ({ data, openDeleteModal, openEditModal }) => {
+  return (
+    <ul className={styles.TransactionList}>
+      {data.map(item => (
+        <TransactionItem
+          key={item.id}
+          transaction={item}
+          openDeleteModal={openDeleteModal}
+          openEditModal={openEditModal}
+        />
+      ))}
+    </ul>
+  );
+};
+
+export default TransactionsList;
+File: D:\dorin\money_guard_team3\src\pages\common\components\AddButton\AddButton.jsx 
+import React from 'react';
+import styles from './AddButton.module.css';
+
+const svgPlus = (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M10 0V20" stroke="white" strokeWidth="2" />
+    <path d="M0 10L20 10" stroke="white" strokeWidth="2" />
+  </svg>
+);
+
+export const ButtonAddTransactions = ({ onClick }) => {
+  return (
+    <button className={styles.ButtonOpenModal} type="button" onClick={onClick}>
+      {svgPlus}
+    </button>
+  );
+};
+File: D:\dorin\money_guard_team3\src\pages\common\components\AddTransactionForm\AddTransactionForm.jsx 
+import { useEffect, useState } from 'react';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import icons from '../../../../images/icons/sprite.svg';
+import { useMediaQuery } from 'react-responsive';
+import styles from './AddTransactionForm.module.css';
+import { useDispatch } from 'react-redux';
+import ReactDatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import enUS from 'date-fns/locale/en-US'; // Importăm localizarea pentru engleză
+import {
+  transactionCategories,
+  getTransactionId,
+} from '../../../common/components/TransactionConstants';
+import FormButton from '../FormButton/FormButton';
+import { addTransaction } from '../../../../redux/transactions/operations';
+import { getUserInfo } from '../../../../redux/auth/operations';
+
+import { FiCalendar } from 'react-icons/fi';
+
+registerLocale('en-US', enUS);
+
+const AddTransactionForm = ({ closeAddModal }) => {
+  const [isOnIncomeTab, setIsOnIncomeTab] = useState(false); // Setăm inițial pe false pentru tab-ul "Expense"
+  useEffect(() => {}, [isOnIncomeTab]);
+
+  const screenCondition = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const dispatch = useDispatch();
+
+  const [startDate, setStartDate] = useState(new Date());
+
+  const initialValues = {
+    amount: '',
+    comment: '',
+  };
+
+  const validationSchema = isOnIncomeTab
+    ? Yup.object({
+        amount: Yup.string().required('Required*'),
+        comment: Yup.string().required('Required*'),
+      })
+    : Yup.object({
+        amount: Yup.string().required('Required*'),
+        comment: Yup.string().required('Required*'),
+        category: Yup.string().required('Required*'),
+      });
+
+  const handleSubmit = (values, { setSubmitting, setStatus }) => {
+    setSubmitting(true);
+
+    dispatch(
+      addTransaction({
+        transactionDate: startDate,
+        type: isOnIncomeTab ? 'INCOME' : 'EXPENSE',
+        categoryId: getTransactionId(values.category || 'Income'),
+        comment: values.comment,
+        amount: isOnIncomeTab ? values.amount : 0 - values.amount,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        closeAddModal();
+        dispatch(getUserInfo());
+      })
+      .catch(error => {
+        setStatus({ success: false, error: error });
+        setSubmitting(false);
+      });
+  };
+
+  return (
+    <div className={styles.modalContent}>
+      {screenCondition && (
+        <button className={styles.closeButton} onClick={() => closeAddModal()}>
+          <svg>
+            <use href={`${icons}#icon-close`}></use>
+          </svg>
+        </button>
+      )}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <h2 className={styles.formTitle}>Add transaction</h2>
+
+            <div className={styles.switcheWrapper}>
+              <span className={`${isOnIncomeTab ? styles.income : null}`}>
+                Income
+              </span>
+
+              <input
+                type="checkbox"
+                id="switcherButton"
+                onChange={() => setIsOnIncomeTab(!isOnIncomeTab)}
+                checked={!isOnIncomeTab}
+              />
+              <label htmlFor="switcherButton"></label>
+
+              <span className={`${!isOnIncomeTab ? styles.expense : null}`}>
+                Expense
+              </span>
+            </div>
+
+            <div className={styles.inputWrapper}>
+              {!isOnIncomeTab && (
+                <div className={`${styles.inputField} ${styles.category}`}>
+                  <Field as="select" name="category" autoFocus required>
+                    <option value="">Select your category</option>
+                    {transactionCategories.slice(0, -1).map(item => (
+                      <option key={item.id}>{item.name}</option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="category" component="p" />
+                </div>
+              )}
+
+              <div className={`${styles.inputField} ${styles.amount}`}>
+                <Field type="number" name="amount" min="1" placeholder="0.00" />
+                <ErrorMessage name="amount" component="p" />
+              </div>
+
+              <div className={`${styles.inputField} ${styles.date}`}>
+                <ReactDatePicker
+                  dateFormat="dd.MM.yyyy"
+                  selected={startDate}
+                  onChange={date => setStartDate(date)}
+                  locale="en-US" // Setăm localizarea la engleză
+                  calendarStartDay={1} // Setăm începutul săptămânii la luni
+                />
+                <FiCalendar className={styles.icon} />
+              </div>
+
+              <div className={`${styles.inputField} ${styles.comment}`}>
+                <Field type="text" name="comment" placeholder="Comment" />
+                <ErrorMessage name="comment" component="p" />
+              </div>
+            </div>
+
+            <div className={styles.buttonsWrapper}>
+              <FormButton
+                type={'submit'}
+                text={'Add'}
+                variant={'multiColorButtton'}
+                isDisabled={isSubmitting}
+              />
+              <FormButton
+                type={'button'}
+                text={'cancel'}
+                variant={'whiteButtton'}
+                handlerFunction={closeAddModal}
+              />
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
+};
+
+export default AddTransactionForm;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Container\Container.jsx 
+import { AdaptiveContainer } from './Container.styled';
+
+function Container({ children }) {
+  return (
+    <AdaptiveContainer>
+      {children}
+    </AdaptiveContainer>
+  );
+}
+
+export default Container
+File: D:\dorin\money_guard_team3\src\pages\common\components\Container\Container.styled.jsx 
+import styled from 'styled-components';
+
+export const AdaptiveContainer = styled.div`
+  margin: 0 auto;
+  width: 100%;
+  max-width: 320px;
+  padding: 0 20px;
+  display: flex;
+
+  @media only screen and (min-width: 768px) {
+    max-width: 768px;
+    // padding: 0 32px;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    max-width: 1280px;
+    padding: 0 16px;
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Currency\Currency.jsx 
+import React, { useEffect, useCallback, useState } from 'react';
+import image from '../../../../images/currency.png';
+import imageTab from '../../../../images/currencyTab.png';
+import {
+  CurrencyWrapper,
+  CurrencyTable,
+  CurrencyTableHead,
+  CurrencyTableBodyList,
+  CurrencyTableItem,
+  CurrencyTableHeadItem,
+  CurrencyTableBody,
+  CurrecnyDiagram,
+  LowerNumber,
+  HigherNumber,
+  CurrencyHeadWrapper,
+  Gradient,
+} from './Currency.styled';
+import { nanoid } from 'nanoid';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { useMediaQuery } from 'react-responsive';
+import { fetchCurrency } from '../../../../redux/currency/operations';
+import { selectCurrency } from '../../../../redux/currency/selectors';
+
+import { setLastUpdatedTime } from '../../../../redux/currency/slice';
+import { selectLastUpdatedTime } from '../../../../redux/currency/selectors';
+
+const Currency = () => {
+  const [currency, setCurrency] = useState([]);
+  const selectedCurrency = useSelector(selectCurrency);
+  const lastUpdatedTime = useSelector(selectLastUpdatedTime);
+
+  const dispatch = useDispatch();
+
+  const isHourPassed = useCallback(() => {
+    const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+    return Date.now() - lastUpdatedTime >= ONE_HOUR_IN_MS;
+  }, [lastUpdatedTime]);
+
+  useEffect(() => {
+    if (isHourPassed() || !lastUpdatedTime) {
+      dispatch(fetchCurrency());
+    }
+  }, [dispatch, lastUpdatedTime, isHourPassed]);
+
+  useEffect(() => {
+    setCurrency(selectedCurrency);
+  }, [selectedCurrency]);
+
+  useEffect(() => {
+    dispatch(setLastUpdatedTime(Date.now()));
+  }, [dispatch]);
+
+  const isTablet = useMediaQuery({ query: '(max-width: 1279px)' });
+  const isDesktop = useMediaQuery({ query: '(min-width: 1280px)' });
+
+  return (
+    <CurrencyWrapper>
+      <Gradient />
+      <CurrencyTable>
+        <CurrencyHeadWrapper>
+          <CurrencyTableHead>
+            <CurrencyTableHeadItem>Currency</CurrencyTableHeadItem>
+            <CurrencyTableHeadItem>Purchase</CurrencyTableHeadItem>
+            <CurrencyTableHeadItem>Sale</CurrencyTableHeadItem>
+          </CurrencyTableHead>
+        </CurrencyHeadWrapper>
+
+        <CurrencyTableBodyList>
+          {currency?.map(el => (
+            <CurrencyTableBody key={nanoid()}>
+              <CurrencyTableItem>{el.currencyName}</CurrencyTableItem>
+              <CurrencyTableItem>{el.rateBuy.toFixed(2)}</CurrencyTableItem>
+              <CurrencyTableItem>{el.rateSell.toFixed(2)}</CurrencyTableItem>
+            </CurrencyTableBody>
+          ))}
+        </CurrencyTableBodyList>
+      </CurrencyTable>
+      <CurrecnyDiagram>
+        {currency?.map(item => {
+          if (item.currencyCodeA === '840') {
+            // Afișează USD
+            return (
+              <LowerNumber key={nanoid()}>
+                {Number(item.rateBuy).toFixed(2)}
+              </LowerNumber>
+            );
+          } else if (item.currencyCodeA === '978') {
+            // Afișează EUR
+            return (
+              <HigherNumber key={nanoid()}>
+                {Number(item.rateBuy).toFixed(2)}
+              </HigherNumber>
+            );
+          }
+          return null; // Pentru alte valute, dacă există, nu afișa nimic
+        })}
+        {isDesktop && <img src={image} alt="" />}
+        {isTablet && <img src={imageTab} alt="" />}
+      </CurrecnyDiagram>
+    </CurrencyWrapper>
+  );
+};
+
+export default Currency;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Currency\Currency.styled.jsx 
+import styled from 'styled-components';
+
+export const CurrencyWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  // width: calc(100% + 16px);
+  // margin-left: -16px;
+  color: #fbfbfb;
+  box-shadow: 0 4px 60px 0 rgba(0, 0, 0, 0.25);
+  overflow: clip;
+
+  @media only screen and (max-width: 1279px) {
+    margin-left: 0;
+    width: 336px;
+  }
+
+  @media only screen and (max-width: 769px) {
+    width: 336px;
+    border-radius: 0px 0px 8px 8px;
+    background: rgba(74, 86, 226, 0.1);
+  }
+
+  @media only screen and (max-width: 425px) {
+    width: 320px;
+    margin-top: 0;
+    margin-left: -20px;
+  }
+`;
+
+export const CurrencyTable = styled.div`
+  max-height: 170px;
+  width: 100%;
+  margin-bottom: 80px;
+
+  @media only screen and (max-width: 1280px) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  @media only screen and (max-width: 320px) {
+    width: 320px;
+  }
+`;
+
+export const CurrencyHeadWrapper = styled.div`
+  background: rgba(103, 77, 166, 0.7);
+`;
+
+export const CurrencyTableHead = styled.ul`
+  display: flex;
+  flex-direction: row;
+  gap: 55px;
+  padding: 19px 0;
+  margin: 0 auto 24px;
+  width: 480px;
+  margin-left: 80px;
+  list-style-type: none;
+
+  @media only screen and (max-width: 1280px) {
+    width: 336px;
+  }
+
+  @media only screen and (max-width: 1279px) {
+    padding: 15px 0;
+    gap: 58px;
+  }
+
+  @media only screen and (max-width: 1279px) {
+    margin: 0 0 8px 10px;
+  }
+
+  @media only screen and (max-width: 320px) {
+    gap: 52px;
+  }
+`;
+
+export const CurrencyTableBody = styled.ul`
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
+
+  @media only screen and (max-width: 1279px) {
+    gap: 65px;
+  }
+
+  @media only screen and (max-width: 320px) {
+    gap: 57px;
+  }
+`;
+
+export const CurrencyTableBodyList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 14px;
+  margin-left: 32px;
+
+  @media only screen and (max-width: 1279px) {
+    margin-left: -40px;
+    margin-bottom: 0;
+    gap: 12px;
+  }
+`;
+
+export const CurrencyTableHeadItem = styled.li`
+  color: #fbfbfb;
+  font-size: 16px;
+  font-family: 'Poppins-SemiBold', sans-serif;
+  text-align: center;
+`;
+
+export const CurrencyTableItem = styled.li`
+  display: inline-block;
+  color: #fbfbfb;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  width: 62px;
+  font-weight: 400;
+  &:last-child {
+    width: 42px;
+  }
+  &:first-child {
+    width: 65px;
+  }
+`;
+
+export const CurrecnyDiagram = styled.div`
+  position: relative;
+  display: block;
+  height: auto;
+  max-height: 185px;
+
+  @media only screen and (max-width: 1281px) {
+    max-width: 480px;
+  }
+
+  img {
+    @media only screen and (max-width: 1281px) {
+      // width: 480px;
+      max-height: 167px;
+      margin-top: 50px;
+    }
+  }
+`;
+
+export const LowerNumber = styled.p`
+  position: absolute;
+  top: 3px;
+  left: 48px;
+
+  color: #ff868d;
+  font-size: 12px;
+  font-weight: 400;
+
+  @media only screen and (max-width: 1279px) {
+    // display: none;
+    top: 43px;
+    left: 35px;
+  }
+`;
+
+export const HigherNumber = styled.p`
+  position: absolute;
+  top: -30px;
+  right: 97px;
+
+  color: #ff868d;
+  font-size: 12px;
+  font-weight: 400;
+
+  @media only screen and (max-width: 1279px) {
+    // display: none;
+    top: 20px;
+    right: 65px;
+  }
+`;
+
+export const Gradient = styled.div`
+  z-index: -20;
+  position: absolute;
+  width: 454px;
+  height: 454px;
+  border-radius: 454px;
+  background: rgba(47, 21, 176, 0.73);
+  filter: blur(100px);
+`;
+File: D:\dorin\money_guard_team3\src\pages\common\components\EditTransactionForm\EditTransactionForm.jsx 
+import { useState } from 'react';
+import styles from './EditTransactionForm.module.css';
+
+import FormButton from '../FormButton/FormButton';
+import icons from '../../../../images/icons/sprite.svg';
+import { useMediaQuery } from 'react-responsive';
+
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import ReactDatePicker, { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import enUS from 'date-fns/locale/en-US'; // Importăm localizarea pentru engleză
+import {
+  transactionCategories,
+  getTransactionId,
+} from '../TransactionConstants';
+
+import { useSelector } from 'react-redux';
+import { selectTransactionForUpdate } from '../../../../redux/transactions/selectors';
+import { modifyTransaction } from '../../../../redux/transactions/operations';
+import { getUserInfo } from '../../../../redux/auth/operations';
+import { FiCalendar } from 'react-icons/fi';
+
+// Înregistram localizarea pentru utilizarea în componenta ReactDatePicker
+registerLocale('en-US', enUS);
+
+const EditTransactionForm = ({ closeModal }) => {
+  const transactionForUpdate = useSelector(selectTransactionForUpdate);
+  console.log('Selected transaction for update:', transactionForUpdate);
+
+  const isOnIncomeTab = transactionForUpdate.type === 'INCOME' ? true : false;
+
+  const screenCondition = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const dispatch = useDispatch();
+
+  const [startDate, setStartDate] = useState(
+    new Date(transactionForUpdate?.transactionDate || Date.now())
+  );
+
+  const initialValues = {
+    amount: Math.abs(transactionForUpdate?.amount || 0),
+    comment: transactionForUpdate?.comment || '',
+    category: transactionForUpdate?.categoryId || '',
+  };
+
+  const validationSchema = isOnIncomeTab
+    ? Yup.object({
+        amount: Yup.string().required('Required*'),
+        comment: Yup.string().required('Required*'),
+      })
+    : Yup.object({
+        amount: Yup.string().required('Required*'),
+        comment: Yup.string().required('Required*'),
+        category: Yup.string().required('Required*'),
+      });
+
+  const handleSubmit = (values, { setSubmitting, setStatus }) => {
+    setSubmitting(true);
+
+    dispatch(
+      modifyTransaction({
+        transactionId: transactionForUpdate.id,
+        transactionData: {
+          transactionDate: startDate,
+          type: isOnIncomeTab ? 'INCOME' : 'EXPENSE',
+          categoryId: values.category || defaultIncomeCategoryId,
+          comment: values.comment,
+          amount: isOnIncomeTab ? values.amount : 0 - values.amount,
+        },
+      })
+    )
+      .unwrap()
+      .then(() => {
+        closeModal();
+        dispatch(getUserInfo());
+      })
+      .catch(error => {
+        setStatus({ success: false, error: error });
+        setSubmitting(false);
+      });
+  };
+
+  return (
+    <div className={styles.modalContent}>
+      {screenCondition && (
+        <button className={styles.closeButton} onClick={() => closeModal()}>
+          <svg>
+            <use href={`${icons}#icon-close`}></use>
+          </svg>
+        </button>
+      )}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        enableReinitialize={true}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <h2 className={styles.formTitle}>Edit transaction</h2>
+
+            <div className={styles.switcheWrapper}>
+              <span className={`${isOnIncomeTab ? styles.income : null}`}>
+                Income
+              </span>
+              <span className={styles.delimeter}>/</span>
+              <span className={`${!isOnIncomeTab ? styles.expense : null}`}>
+                Expense
+              </span>
+            </div>
+
+            <div className={styles.inputWrapper}>
+              {!isOnIncomeTab && (
+                <div className={`${styles.inputField} ${styles.category}`}>
+                  <Field as="select" name="category" autoFocus required>
+                    <option value="">Select your category</option>
+                    {transactionCategories.slice(0, -1).map(item => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage name="category" component="p" />
+                </div>
+              )}
+
+              <div className={`${styles.inputField} ${styles.amount}`}>
+                <Field type="number" name="amount" min="1" placeholder="0.00" />
+                <ErrorMessage name="amount" component="p" />
+              </div>
+
+              <div className={`${styles.inputField} ${styles.date}`}>
+                <ReactDatePicker
+                  dateFormat="dd.MM.yyyy"
+                  selected={startDate}
+                  onChange={date => setStartDate(date)}
+                  locale="en-US" // Setăm localizarea la engleză
+                  calendarStartDay={1} // Setăm începutul săptămânii la luni
+                />
+                <FiCalendar className={styles.icon} />
+              </div>
+
+              <div className={`${styles.inputField} ${styles.comment}`}>
+                <Field type="text" name="comment" placeholder="Comment" />
+                <ErrorMessage name="comment" component="p" />
+              </div>
+            </div>
+
+            <div className={styles.buttonsWrapper}>
+              <FormButton
+                type={'submit'}
+                text={'save'}
+                variant={'multiColorButtton'}
+                isDisabled={isSubmitting}
+              />
+              <FormButton
+                type={'button'}
+                text={'cancel'}
+                variant={'whiteButtton'}
+                handlerFunction={() => closeModal()}
+              />
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
+};
+
+export default EditTransactionForm;
+File: D:\dorin\money_guard_team3\src\pages\common\components\FormButton\FormButton.jsx 
+import styles from './FormButton.module.css';
+
+const FormButton = ({
+  type,
+  text,
+  handlerFunction,
+  variant,
+  isDisabled = false,
+}) => {
+  return (
+    <button
+      type={type}
+      onClick={handlerFunction}
+      className={`${styles.formButton} ${styles[variant]}`}
+      disabled={isDisabled}
+    >
+      {text}
+    </button>
+  );
+};
+
+export default FormButton;
+File: D:\dorin\money_guard_team3\src\pages\common\components\LoadingSpinner\LoadingSpinner.jsx 
+import { RotatingLines } from 'react-loader-spinner';
+import styles from './LoadingSpinner.module.css';
+
+const LoadingSpinner = () => {
+  
+  return (
+    <RotatingLines
+      visible={true}
+      height="96"
+      width="96"
+      color="grey"
+      strokeWidth="5"
+      animationDuration="0.75"
+      ariaLabel="rotating-lines-loading"
+      wrapperClass={styles.loadingSpinner}
+    />
+  );
+};
+
+
+export default LoadingSpinner;File: D:\dorin\money_guard_team3\src\pages\common\components\ModalAddTransaction\ModalAddTransaction.jsx 
+import Modal from 'react-modal';
+import AddTransactionForm from '../AddTransactionForm/AddTransactionForm';
+import { useDispatch, useSelector } from 'react-redux';
+import s from './ModalAddTransaction.module.css';
+import {
+  selectIsAddModalOpen,
+  closeAddModal,
+} from '../../../../redux/Modals/slice';
+
+Modal.setAppElement('#root');
+
+function ModalAddTransaction() {
+  const dispatch = useDispatch();
+  const isAddOpen = useSelector(selectIsAddModalOpen);
+
+  const handleClose = () => {
+    dispatch(closeAddModal());
+  };
+
+  return (
+    <Modal
+      isOpen={isAddOpen}
+      className={s.modal}
+      overlayClassName={s.modal_Wrap}
+      onRequestClose={handleClose}
+    >
+      <div className={s.modal_close} onClick={handleClose}></div>
+      {/* <h2>Add transaction</h2> */}
+      <AddTransactionForm closeAddModal={handleClose} />
+    </Modal>
+  );
+}
+
+export default ModalAddTransaction;
+File: D:\dorin\money_guard_team3\src\pages\common\components\ModalDeleteTransaction\ModalDeleteTransaction.jsx 
+import styles from './ModalDeleteTransaction.module.css';
+import { useMediaQuery } from 'react-responsive';
+
+import FormButton from '../FormButton/FormButton';
+import Logo from '../../Logo/Logo';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteTransaction } from '../../../../redux/transactions/operations';
+import { selectTrasactionIdForDelete } from '../../../../redux/transactions/selectors';
+import { getUserInfo } from '../../../../redux/auth/operations';
+
+const ModalDeleteTransaction = ({ closeModal }) => {
+  const dispatch = useDispatch();
+
+  const trasactionIdForDelete = useSelector(selectTrasactionIdForDelete);
+
+  const modalRef = useRef();
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    // setTimeout(() => {
+    //   modalRef.current.classList.add(styles.isOpen);
+    // }, 0);
+
+    const addCloseEvent = event => {
+      event.key === 'Escape' && closeModal();
+    };
+    document.addEventListener('keydown', addCloseEvent);
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.removeEventListener('keydown', addCloseEvent);
+    };
+  });
+
+  const closeOnClickOutside = event => {
+    event.currentTarget === event.target && closeModal();
+  };
+
+  const screenCondition = useMediaQuery({ query: '(min-width: 768px)' });
+
+  const handleDeleteClick = () => [
+    dispatch(deleteTransaction(trasactionIdForDelete))
+      .unwrap()
+      .then(() => {
+        closeModal();
+        dispatch(getUserInfo());
+      })
+      .catch(error => {
+        console.log(error);
+      }),
+  ];
+
+  return (
+    <div
+      className={styles.deleteModal}
+      onClick={closeOnClickOutside}
+      ref={modalRef}
+    >
+      <div className={styles.modalBg}>
+        <div className={styles.modalContent}>
+          {screenCondition && <Logo variant={'formLogo'} />}
+
+          <p>Are you sure you want to detete this transaction?</p>
+
+          <div className={styles.buttonsWrapper}>
+            <FormButton
+              type={'button'}
+              text={'Delete'}
+              variant={'multiColorButtton'}
+              handlerFunction={handleDeleteClick}
+            />
+            <FormButton
+              type={'button'}
+              text={'cancel'}
+              variant={'whiteButtton'}
+              handlerFunction={() => closeModal()}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModalDeleteTransaction;
+File: D:\dorin\money_guard_team3\src\pages\common\components\ModalEditTransaction\ModalEditTransaction.jsx 
+import { useEffect, useRef } from 'react';
+import styles from './ModalEditTransaction.module.css';
+import EditTransactionForm from '../EditTransactionForm/EditTransactionForm';
+
+const ModalEditTransactionNew = ({ closeModal }) => {
+  const modalRef = useRef();
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    // setTimeout(() => {
+    //   modalRef.current.classList.add(styles.isOpen);
+    // }, 0);
+
+    const addCloseEvent = event => {
+      event.key === 'Escape' && closeModal();
+    };
+    document.addEventListener('keydown', addCloseEvent);
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.removeEventListener('keydown', addCloseEvent);
+    };
+  });
+
+  const closeOnClickOutside = event => {
+    event.target === event.currentTarget && closeModal();
+  };
+
+  return (
+    <>
+      <div
+        ref={modalRef}
+        className={styles.editModal}
+        onClick={closeOnClickOutside}
+      >
+        <div className={styles.modalBg}>
+          <EditTransactionForm closeModal={closeModal} />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ModalEditTransactionNew;
+File: D:\dorin\money_guard_team3\src\pages\common\components\ModalLogout\ModalLogout.jsx 
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { logoutThunk } from '../../../../redux/auth/operations';
+import icons from '../../../../images/icons/icons.svg';
+import {
+  ModalButton,
+  ModalButtonCancel,
+  ModalContent,
+  ModalWrapper,
+  StyledIcon,
+  StyledTitle,
+  Text,
+} from './ModalLogout.styled';
+import Header from '../Header';
+import { useMediaQuery } from 'react-responsive';
+// import { Gradient } from 'components/AddTransactionModal/AddTransaction/AddTransaction.styled';
+
+const ModalLogout = ({ closeModal }) => {
+  const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logoutThunk());
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+  const onBackdropClick = e => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
+  useEffect(() => {
+    const handleEscape = e => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [closeModal]);
+
+  return (
+    <>
+      <ModalWrapper onClick={onBackdropClick}>
+        {!isTabletOrDesktop && <Header closeModal={closeModal} />}
+        <ModalContent>
+          {/* <Gradient /> */}
+          <StyledIcon>
+            <use href={`${icons}#icon-Logo`} />
+          </StyledIcon>
+          <StyledTitle>Money Guard</StyledTitle>
+          <Text>Are you sure you want to log out?</Text>
+          <ModalButton onClick={handleLogout}>logout</ModalButton>
+          <ModalButtonCancel
+            onClick={() => {
+              closeModal(false);
+            }}
+          >
+            cancel
+          </ModalButtonCancel>
+        </ModalContent>
+      </ModalWrapper>
+    </>
+  );
+};
+
+export default ModalLogout;
+File: D:\dorin\money_guard_team3\src\pages\common\components\ModalLogout\ModalLogout.styled.jsx 
+import styled from 'styled-components';
+
+////////////////////////////////////////
+export const ModalWrapper = styled.div`
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  z-index: 100;
+
+  &::before {
+    background-color: rgba(34, 13, 91, 0.23);
+    content: '';
+    backdrop-filter: blur(3.5px);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+`;
+
+export const ModalContent = styled.div`
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  backdrop-filter: blur(50px);
+  padding: 0 20px;
+  @media only screen and (min-width: 768px) {
+    border-radius: 8px;
+    width: 533px;
+    height: 447px;
+    padding: 60px 117px;
+    box-shadow: 0px 4px 60px 0px rgba(0, 0, 0, 0.25);
+  }
+`;
+export const StyledIcon = styled.svg`
+  @media only screen and (max-width: 767px) {
+    display: none; /* Hide on mobile devices */
+  }
+  @media only screen and (min-width: 768px) {
+    width: 35px;
+    height: 35px;
+  }
+`;
+export const StyledTitle = styled.h3`
+  @media only screen and (max-width: 767px) {
+    display: none; /* Hide on mobile devices */
+  }
+  color: var(--white, #fbfbfb);
+  font-size: 19px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 52px;
+  @media only screen and (min-width: 768px) {
+    font-size: 26.963px;
+  }
+`;
+export const Text = styled.p`
+  color: #fff;
+  font-size: 18px;
+  line-height: normal;
+  text-align: center;
+  font-style: normal;
+  font-weight: 400;
+  margin-bottom: 40px;
+  @media only screen and (min-width: 768px) {
+    margin-bottom: 52px;
+  }
+`;
+export const ModalButton = styled.button`
+  width: 280px;
+  height: 50px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #fff;
+  background: var(--button-gradient);
+  margin-bottom: 20px;
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+  @media only screen and (min-width: 768px) {
+    width: 300px;
+  }
+`;
+
+export const ModalButtonCancel = styled.button`
+  width: 280px;
+  height: 50px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--text-button, #623f8b);
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  //   background: var(--button-gradient);
+  @media only screen and (min-width: 768px) {
+    width: 300px;
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Navigation\Navigation.jsx 
+import React from 'react';
+import { StyledIcon, StyledLink, StyledNavigation } from './Navigation.styled';
+import icons from '../../../../images/icons/icons.svg';
+import { useMediaQuery } from 'react-responsive';
+import { useLocation } from 'react-router-dom';
+
+function Navigation() {
+  const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const location = useLocation();
+  const currentPage = location.pathname
+    .replace('dashboard', '')
+    .replaceAll('/', '');
+
+  return (
+    <StyledNavigation>
+      <StyledLink
+        to={'home'}
+        $current={currentPage === 'home' || currentPage === ''}
+      >
+        <StyledIcon width={38} height={38}>
+          <use href={`${icons}#icon-home_bcg`} />
+        </StyledIcon>
+        {isTabletOrDesktop && <p>Home</p>}
+      </StyledLink>
+      <StyledLink to={'statistics'} $current={currentPage === 'statistics'}>
+        <StyledIcon width={38} height={38}>
+          <use href={`${icons}#icon-stat_bcg`} />
+        </StyledIcon>
+        {isTabletOrDesktop && <p>Statistics</p>}
+      </StyledLink>
+      {!isTabletOrDesktop && (
+        <StyledLink to={'currency'} $current={currentPage === 'currency'}>
+          <StyledIcon width={38} height={38}>
+            <use href={`${icons}#icon-currency_bcg`} />
+          </StyledIcon>
+        </StyledLink>
+      )}
+    </StyledNavigation>
+  );
+}
+
+export default Navigation;
+File: D:\dorin\money_guard_team3\src\pages\common\components\Navigation\Navigation.styled.jsx 
+import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
+
+export const StyledNavigation = styled.nav`
+  height: 68px;
+  display: flex;
+  gap: 38px;
+  justify-content: center;
+  align-items: center;
+
+  @media only screen and (min-width: 768px) {
+    height: 134px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 40px;
+    margin-left: 50px;
+  }
+`;
+
+export const StyledLink = styled(NavLink)`
+  padding: 0;
+  position: relative;
+  color: ${({ $current }) => ($current ? '#734aef' : '#FFFFFF66')};
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    width: 30px;
+    height: 30px;
+    background-color: ${({ $current }) =>
+      $current ? '#fbfbfb' : 'transparent'};
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: -10;
+  }
+
+  @media only screen and (min-width: 768px) {
+    display: flex;
+    height: 27px;
+    align-items: center;
+
+    p {
+      margin-left: 23px;
+      color: var(--white);
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: ${({ $current }) => ($current ? 700 : 400)};
+    }
+
+    &::after {
+      content: '';
+      width: 14px;
+      height: 14px;
+      top: 7px;
+      left: 3px;
+    }
+  }
+`;
+
+export const StyledIcon = styled.svg`
+  fill: currentColor;
+
+  @media only screen and (min-width: 768px) {
+    width: 18px;
+    height: 18px;
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\common\components\RegistrationForm\RegistrationForm.styled.js 
+import { MdEmail } from 'react-icons/md';
+import { IoMdLock } from 'react-icons/io';
+import { FaUser } from 'react-icons/fa6';
+import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
+import PasswordStrengthBar from 'react-password-strength-bar-with-style-item';
+import { VscEye, VscEyeClosed } from 'react-icons/vsc';
+
+export const StyledBoxForm = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 23px 20px;
+  min-height: 100vh;
+  background: var(--Form-color, rgba(255, 255, 255, 0.1));
+
+  @media only screen and (min-width: 768px) {
+    width: 533px;
+    min-height: 624px;
+    padding: 40px 62px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+
+    &::before {
+      /* background-color: rgba(255, 255, 255, 0.1); */
+      content: '';
+      backdrop-filter: blur(50px);
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 8px;
+      box-shadow: 0px 4px 60px 0px rgba(0, 0, 0, 0.25);
+    }
+  }
+`;
+export const Gradient = styled.div`
+  @media only screen and (min-width: 768px) {
+    z-index: -20;
+    position: absolute;
+    width: 454px;
+    height: 454px;
+    border-radius: 454px;
+    background: rgba(47, 21, 176, 0.73);
+    filter: blur(100px);
+    inset: 0;
+    margin: 0 auto;
+  }
+`;
+export const StyledIcon = styled.svg`
+  font-size: 25px;
+  @media only screen and (min-width: 768px) {
+    width: 35px;
+    height: 35px;
+  }
+`;
+
+export const StyledTitle = styled.p`
+  color: var(--white, #fbfbfb);
+  font-size: 19.111px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 40px;
+
+  @media only screen and (min-width: 768px) {
+    font-size: 26.963px;
+  }
+`;
+
+export const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  min-width: 100%;
+  height: 100%;
+`;
+
+export const StyledLabelBox = styled.div`
+  max-width: 100%;
+  /* margin: 0 auto;
+  margin-bottom: 40px; */
+  position: relative;
+  height: 45px;
+  margin-bottom: 25px;
+`;
+
+export const StyledLabel = styled.label`
+  display: block;
+  color: rgba(156, 163, 175, 1);
+  max-width: 100%;
+`;
+
+export const StyledInputBox = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  border-bottom: 1px solid var(--white-40, rgba(255, 255, 255, 0.4));
+
+  max-width: 100%;
+  width: 280px;
+
+  @media only screen and (min-width: 768px) {
+    width: 409px;
+  }
+`;
+
+export const StyledUserIcon = styled(FaUser)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  width: 18px;
+  height: 16px;
+  margin-left: 12px;
+`;
+
+export const StyledEmailIcon = styled(MdEmail)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 24px;
+  margin-left: 12px;
+`;
+
+export const StyledPasswordIcon = styled(IoMdLock)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 24px;
+  margin-left: 12px;
+`;
+
+export const StyledInputField = styled.input`
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  padding: 5px 11px;
+  position: relative;
+`;
+
+export const StyledEye = styled.button`
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+`;
+
+export const StyledNoEyeIcon = styled(VscEyeClosed)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 25px;
+`;
+
+export const StyledEyeIcon = styled(VscEye)`
+  color: var(--white-60, rgba(255, 255, 255, 0.6));
+  font-size: 27px;
+`;
+
+export const StyledErr = styled.p`
+  margin-left: 12px;
+  margin-top: 7px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  /* margin-top: 8px; */
+`;
+
+export const StyledSpan = styled.span`
+  width: 280px;
+  max-width: 100%;
+  margin-top: -40px;
+  @media only screen and (min-width: 768px) {
+    width: 409px;
+  }
+`;
+
+export const StyledPasswordStrengthBar = styled(PasswordStrengthBar)`
+  div {
+    height: 4px !important;
+    stroke: #ffc727;
+    filter: ${({ active }) =>
+      active ? 'drop-shadow(0px 1px 8px rgba(255, 199, 39, 0.5))' : 'none'};
+    :first-child {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    :last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    :nth-child(even) {
+      width: 0 !important;
+    }
+  }
+`;
+
+export const StyledRegister = styled.button`
+  margin-top: 40px;
+  border-radius: 20px;
+  max-height: 50px;
+  padding: 13px 0;
+  background: var(
+    --button-gradient,
+    linear-gradient(97deg, #ffc727 -16.42%, #9e40ba 97.04%, #7000ff 150.71%)
+  );
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  border: none;
+
+  color: var(--white, #fbfbfb);
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  max-width: 280px;
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+  @media only screen and (min-width: 768px) {
+    max-width: 300px;
+  }
+`;
+
+export const StyledLink = styled(NavLink)`
+  width: 100%;
+  max-width: 280px;
+  max-height: 50px;
+  padding: 13px 0;
+  outline: transparent;
+  cursor: pointer;
+  margin-top: 20px;
+
+  color: rgba(98, 63, 139, 1);
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 1.8px;
+
+  border-radius: 20px;
+  background: #fcfcfc;
+  box-shadow: 1px 9px 15px 0px rgba(0, 0, 0, 0.2);
+
+  transition: scale 250ms ease-in-out,
+  box-shadow 250ms ease-in-out;
+
+  &:hover {
+    scale: 0.99;
+    box-shadow: 3px 5px 8px 3px rgba(0, 0, 0, 0.5);
+  }
+  @media only screen and (min-width: 768px) {
+    max-width: 300px;
+  }
+`;
+File: D:\dorin\money_guard_team3\src\pages\common\components\RegistrationForm\RegistrationForm.jsx 
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { registerThunk } from '../../../../redux/auth/operations';
+import icons from '../../../../images/icons/icons.svg';
+
+import {
+  Gradient,
+  StyledBoxForm,
+  StyledEmailIcon,
+  StyledErr,
+  StyledEye,
+  StyledEyeIcon,
+  StyledForm,
+  StyledIcon,
+  StyledInputBox,
+  StyledInputField,
+  StyledLabel,
+  StyledLabelBox,
+  StyledLink,
+  StyledNoEyeIcon,
+  StyledPasswordIcon,
+  StyledPasswordStrengthBar,
+  StyledRegister,
+  StyledSpan,
+  StyledTitle,
+  StyledUserIcon,
+} from './RegistrationForm.styled';
+import { toast } from 'react-toastify';
+
+const userSchema = yup.object().shape({
+  username: yup.string().required('Required'),
+  email: yup.string().email('Please enter a valid email!').required('Required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters!')
+    .max(12, 'Password must be at most 12 characters')
+    .required('Please confirm your password'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match!')
+    .required('Required'),
+});
+
+const RegistrationForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(userSchema),
+  });
+
+  const dispatch = useDispatch();
+
+  const [pass, setPass] = useState('');
+
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
+  const togglePassVisibility = () => setShowPass(!showPass);
+  const toggleConfirmPassVisibility = () =>
+    setShowConfirmPass(!showConfirmPass);
+
+  const thisEye = !showPass ? { type: 'password' } : { type: 'text' };
+  const thisConfirmEye = !showConfirmPass
+    ? { type: 'password' }
+    : { type: 'text' };
+
+  const isFilterActive = pass.length >= 6;
+
+  const submit = data => {
+    dispatch(registerThunk(data))
+      .unwrap()
+      .then(res => {
+        toast.success(`Welcome ${res.user.username}!`);
+      })
+      .catch(err => {
+        toast.error(err);
+      });
+
+    reset();
+  };
+
+  return (
+    <StyledBoxForm>
+      <Gradient />
+      <StyledForm onSubmit={handleSubmit(submit)}>
+        <StyledIcon width={25} height={25}>
+          <use href={`${icons}#icon-Logo`} />
+        </StyledIcon>
+        <StyledTitle>Money Guard</StyledTitle>
+        <StyledLabelBox>
+          <StyledLabel>
+            <StyledInputBox>
+              <StyledUserIcon width={24} height={24} />
+              <StyledInputField
+                {...register('username')}
+                placeholder="Name"
+                type="text"
+                name="username"
+              />
+            </StyledInputBox>
+            <StyledErr>{errors.username?.message}</StyledErr>
+          </StyledLabel>
+        </StyledLabelBox>
+        <StyledLabelBox>
+          <StyledLabel>
+            <StyledInputBox>
+              <StyledEmailIcon width={24} height={24} />
+              <StyledInputField
+                {...register('email')}
+                placeholder="E-mail"
+                type="text"
+                name="email"
+              />
+            </StyledInputBox>
+            <StyledErr>{errors.email?.message}</StyledErr>
+          </StyledLabel>
+        </StyledLabelBox>
+        <StyledLabelBox>
+          <StyledLabel>
+            <StyledInputBox>
+              <StyledPasswordIcon width={24} height={24} />
+              <StyledInputField
+                {...register('password')}
+                placeholder="Password"
+                name="password"
+                onChange={e => setPass(e.target.value)}
+                {...thisEye}
+              />
+
+              <StyledEye type="button" onClick={togglePassVisibility}>
+                {!showPass ? <StyledEyeIcon /> : <StyledNoEyeIcon />}
+              </StyledEye>
+            </StyledInputBox>
+            <StyledErr>{errors.password?.message}</StyledErr>
+          </StyledLabel>
+        </StyledLabelBox>
+        <StyledLabelBox>
+          <StyledLabel>
+            <StyledInputBox>
+              <StyledPasswordIcon width={24} height={24} />
+              <StyledInputField
+                {...register('confirmPassword')}
+                placeholder="Confirm password"
+                name="confirmPassword"
+                {...thisConfirmEye}
+              />
+
+              <StyledEye type="button" onClick={toggleConfirmPassVisibility}>
+                {!showConfirmPass ? <StyledEyeIcon /> : <StyledNoEyeIcon />}
+              </StyledEye>
+            </StyledInputBox>
+            <StyledErr>{errors.confirmPassword?.message}</StyledErr>
+          </StyledLabel>
+        </StyledLabelBox>
+
+        <StyledSpan>
+          <StyledPasswordStrengthBar
+            active={isFilterActive}
+            password={pass}
+            scoreWordStyle={{
+              display: 'none',
+            }}
+            minLength={6}
+            maxLength={12}
+            barColors={['#ddd', '#f6b44d', '#f6b44d', '#25c281', '#25c281']}
+            isRequired={true}
+            max={userSchema.fields.password.max}
+          />
+        </StyledSpan>
+        <StyledRegister type="submit">Register</StyledRegister>
+
+        <StyledLink to="/login">Log in</StyledLink>
+      </StyledForm>
+    </StyledBoxForm>
+  );
+};
+
+export default RegistrationForm;
+File: D:\dorin\money_guard_team3\src\pages\common\components\SharedLayout\SharedLayout.jsx 
+import { Outlet } from 'react-router-dom';
+
+export function SharedLayout() {
+  return (
+      /*<Suspense fallback={<p></p>}>*/
+        <Outlet />
+  /*    </Suspense>*/
+  );
+}
+File: D:\dorin\money_guard_team3\src\pages\common\components\StatisticsChart\StatisticsChart.jsx 
+import "animate.css";
+
+import { Doughnut } from "react-chartjs-2";
+import "chart.js/auto";
+
+import { useSelector } from "react-redux";
+import styles from "./StatisticsChart.module.css";
+import {
+  selectFilteredCategories,
+  selectTransactionsSummary,
+} from "../../../../redux/transactions/selectors";
+import { getTrasactionCategoryColor } from "../TransactionConstants";
+import { formatNumberWithSpaces } from "../formatNumberWithSpaces";
+
+const StatisticsChart = () => {
+  const balanceForSpecificPeriod = useSelector(
+    selectTransactionsSummary
+  )?.periodTotal;
+
+  const filteredCategories = useSelector(selectFilteredCategories);
+
+  const chartLabels =
+    filteredCategories?.length > 0
+      ? filteredCategories?.map((item) => item.name)
+      : ["There is no data for selected date"];
+
+  const chartValues =
+    filteredCategories?.length > 0
+      ? filteredCategories?.map((item) => item.total * -1)
+      : [100];
+
+  const chartBackgroundColors =
+    filteredCategories?.length > 0
+      ? filteredCategories?.map((item) => getTrasactionCategoryColor(item.name))
+      : ["rgba(255, 255, 255, 0.6"];
+
+  const chartData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        data: chartValues,
+        backgroundColor: chartBackgroundColors,
+        borderWidth: 0,
+        hoverOffset: 5,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    cutout: "70%",
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {},
+    },
+    elements: {
+      arc: {
+        hoverOffset: 4,
+      },
+    },
+  };
+
+  const textAnimationClasses =
+    "animate__animated  animate__zoomIn animate__slow";
+
+  return (
+    <div className={styles.chartContainer}>
+      <Doughnut data={chartData} options={chartOptions} />
+      <div
+        className={`${styles.balance} ${textAnimationClasses}`}
+      >{`₴ ${formatNumberWithSpaces(balanceForSpecificPeriod)}`}</div>
+    </div>
+  );
+};
+
+export default StatisticsChart;
+File: D:\dorin\money_guard_team3\src\pages\common\components\StatisticsDashboard\StatisticsDashboard.jsx 
+import { useEffect, useRef, useState } from "react";
+import styles from "./StatisticsDashboard.module.css";
+import { useDispatch } from "react-redux";
+import {
+  Months_OPTIONS,
+  YEARS_OPTIONS,
+} from "../TransactionConstants";
+import { fetchTransactionsSummary } from "../../../../redux/transactions/operations";
+
+const StatisticsDashboard = () => {
+  const dispatch = useDispatch();
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const monthRef = useRef();
+  const yearRef = useRef();
+
+  useEffect(() => {
+    dispatch(
+      fetchTransactionsSummary({
+        month: monthRef.current.value,
+        year: yearRef.current.value,
+      })
+    );
+  }, [currentMonth, currentYear, dispatch]);
+
+  useEffect(() => {
+    monthRef.current.value = currentMonth;
+  }, [currentMonth]);
+
+  return (
+    <div className={styles.dropdownsWrapper}>
+      <select
+        onChange={() => setCurrentMonth(parseInt(monthRef.current.value))}
+        ref={monthRef}
+      >
+        {Months_OPTIONS.map((item) => (
+          <option
+            key={item.value}
+            value={item.value}
+            label={item.label}
+          ></option>
+        ))}
+      </select>
+      <select
+        onChange={() => setCurrentYear(parseInt(yearRef.current.value))}
+        ref={yearRef}
+      >
+        {YEARS_OPTIONS.map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+export default StatisticsDashboard;File: D:\dorin\money_guard_team3\src\pages\common\components\StatisticsTable\StatisticsTable.jsx 
+import styles from "./StatisticsTable.module.css";
+import { useSelector } from "react-redux";
+import {
+  selectTransactionsSummary,
+  selectFilteredCategories,
+} from "../../../../redux/transactions/selectors";
+import { getTrasactionCategoryColor } from "../TransactionConstants";
+import { formatNumberWithSpaces } from "../formatNumberWithSpaces";
+
+const StatisticsTable = () => {
+  const transactionsSummary = useSelector(selectTransactionsSummary);
+  const filteredCategories = useSelector(selectFilteredCategories);
+
+  const renderCategorySummary = () => {
+    return (
+      <div className={styles.categorySummary}>
+        {filteredCategories.map((item) => (
+          <div key={item.name} className={styles.categoryRow}>
+            <div className={styles.category}>
+              <div
+                style={{
+                  backgroundColor: getTrasactionCategoryColor(item.name),
+                }}
+              ></div>
+              <span>{item.name}</span>
+            </div>
+            <span className={styles.sum}>
+              {formatNumberWithSpaces(item.total * -1)}
+            </span>
+          </div>
+        ))}
+
+        <div className={styles.total}>
+          <div className={styles.totalExpenses}>
+            <span>Expenses</span>
+            <span>
+              {formatNumberWithSpaces(transactionsSummary.expenseSummary * -1)}
+            </span>
+          </div>
+
+          <div className={styles.totalIncome}>
+            <span>Income</span>
+            <span>
+              {formatNumberWithSpaces(transactionsSummary.incomeSummary)}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderMisingDataMessage = () => {
+    return <p className={styles.noData}>There is no data for selected date</p>;
+  };
+
+  return (
+    <div className={styles.statisticsTable}>
+      <div className={styles.tableHead}>
+        <span>Category</span>
+        <span>Sum</span>
+      </div>
+
+      {filteredCategories?.length > 0 ? (
+        renderCategorySummary()
+      ) : (
+        renderMisingDataMessage()
+      )}
+    </div>
+  );
+};
+
+export default StatisticsTable;
+File: D:\dorin\money_guard_team3\src\pages\common\components\TransactionsTable\TransactionsTable.jsx 
+import TransactionTableRow from '../TransactionsTableRow/TransactionsTableRow';
+import styles from './TransactionsTable.module.css';
+
+const TransactionsTable = ({ data, openDeleteModal, openEditModal }) => {
+  return (
+    <div className={styles.TransactionsTable}>
+      <table className={styles.table}>
+        <thead className={styles.tableHead}>
+          <tr className={styles.tableHeadRow}>
+            <th className={styles.dateColumn}>Date</th>
+            <th className={styles.typeColumn}>Type</th>
+            <th className={styles.categoryColumn}>Category</th>
+            <th className={styles.commentColumn}>Comment</th>
+            <th className={styles.sumColumn}>Sum</th>
+            <th className={styles.editColumn}></th>
+            <th className={styles.deleteColumn}></th>
+          </tr>
+        </thead>
+        <tbody className={styles.tableBody}>
+          {data.map(item => (
+            <TransactionTableRow
+              key={item.id}
+              transaction={item}
+              openDeleteModal={openDeleteModal}
+              openEditModal={openEditModal}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default TransactionsTable;
+File: D:\dorin\money_guard_team3\src\pages\common\components\TransactionsTableRow\TransactionsTableRow.jsx 
+import { formatData, getTransactionCategory } from '../TransactionConstants';
+import icons from '../../../../images/icons/sprite.svg';
+import styles from './TransactionsTableRow.module.css';
+import {
+  setTrasactionForUpdate,
+  setTrasactionIdForDelete,
+} from '../../../../redux/transactions/slice';
+import { useDispatch } from 'react-redux';
+import { formatNumberWithSpaces } from '../formatNumberWithSpaces';
+
+const TransactionTableRow = ({
+  transaction,
+  openDeleteModal,
+  openEditModal,
+}) => {
+  const { type, categoryId, comment, amount, transactionDate } = transaction;
+
+  const dispatch = useDispatch();
+
+  const handleDeleteClick = () => {
+    openDeleteModal();
+    dispatch(setTrasactionIdForDelete(transaction.id));
+  };
+
+  const handleEditClick = () => {
+    openEditModal();
+    dispatch(
+      setTrasactionForUpdate({
+        id: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        comment: transaction.comment,
+        categoryId: transaction.categoryId,
+        transactionDate: transaction.transactionDate,
+      })
+    );
+  };
+
+  let textClass = '';
+
+  // Determine class based on data
+  if (type === 'INCOME') {
+    textClass = styles.incomeText; // Access class from CSS module
+  } else if (type === 'EXPENSE') {
+    textClass = styles.expenseText;
+  }
+
+  return (
+    <tr className={styles.dataRow}>
+      <td className={styles.TransactionDateColumn}>
+        {formatData(transactionDate)}
+      </td>
+      <td className={styles.TransactionTypeColumn}>
+        {type === 'INCOME' ? '+' : '-'}
+      </td>
+      <td className={styles.TransactionCategoryColumn}>
+        {getTransactionCategory(categoryId)}
+      </td>
+      <td className={styles.TransactionCommentColumn}>{comment}</td>
+      <td className={`${styles.TransactionAmountColumn} ${textClass}`}>
+        {type === 'INCOME'
+          ? formatNumberWithSpaces(amount)
+          : formatNumberWithSpaces(amount * -1)}
+      </td>
+
+      <td className={styles.TransactionEditColumn}>
+        <button
+          className={styles.editButton}
+          type="button"
+          onClick={handleEditClick}
+        >
+          <svg className={styles.editIcon}>
+            <use href={`${icons}#icon-edit`}></use>
+          </svg>
+        </button>
+      </td>
+
+      <td className={styles.TransactionDeleteColumn}>
+        <button
+          className={styles.deleteButton}
+          type="button"
+          onClick={handleDeleteClick}
+        >
+          Delete
+        </button>
+      </td>
+    </tr>
+  );
+};
+
+export default TransactionTableRow;
+File: D:\dorin\money_guard_team3\src\pages\common\Logo\Logo.jsx 
+import styles from './Logo.module.css';
+import icons from '../../../images/icons/sprite.svg';
+import PropTypes from 'prop-types';
+
+// todo: href-ul de la a
+
+const Logo = ({ variant }) => {
+  return (
+    <a
+      className={`${styles.logo} ${styles[variant]}`}
+      href={'/BudgetBusters-MoneyGuard/'}
+    >
+      <svg>
+        <use href={`${icons}#icon-logo`}></use>
+      </svg>
+      <span>Money Guard</span>
+    </a>
+  );
+};
+
+Logo.propTypes = {
+  variant: PropTypes.string.isRequired,
+};
+
+export default Logo;
+File: D:\dorin\money_guard_team3\src\pages\common\Notify\Notify.jsx 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Slide } from 'react-toastify';
+
+const Notify = () => {
+  return (
+    <ToastContainer
+      position="top-right"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+      transition={Slide}
+    />
+  );
+};
+
+export default Notify;File: D:\dorin\money_guard_team3\src\pages\common\service\CurencyRateService.js 
+async function getExchangeRate() {
+  const app_id = '8b363fd5da974ff799c5f684a0aaa34a';
+  const apiUrl = `https://openexchangerates.org/api/latest.json?app_id=${app_id}`;
+  const localStorageKey = 'exchangeRateData';
+  const oneHour = 60 * 60 * 1000;
+
+  const storedData = JSON.parse(localStorage.getItem(localStorageKey));
+  const currentTime = new Date().getTime();
+
+  if (storedData && currentTime - storedData.timestamp < oneHour) {
+    console.log('Returning cached data');
+    return storedData.data;
+  }
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error('Failed to fetch exchange rate');
+    }
+
+    const exchangeRateData = await response.json();
+
+    localStorage.setItem(
+      localStorageKey,
+      JSON.stringify({
+        data: exchangeRateData,
+        timestamp: currentTime,
+      })
+    );
+
+    return exchangeRateData;
+  } catch (error) {
+    console.error('Error fetching exchange rate:', error);
+    return null;
+  }
+}
+
+export default getExchangeRate;
+File: D:\dorin\money_guard_team3\src\redux\actions.js 
+File: D:\dorin\money_guard_team3\src\redux\axiosConfig.js 
+import axios from 'axios';
+
+const setAxiosBaseURL = () => {
+  axios.defaults.baseURL = 'https://wallet.b.goit.study/';
+};
+
+const setAxiosHeader = tokenReceived => {
+  const savedDataLocalString = localStorage.getItem('persist:auth');
+
+  const savedDataLocal = savedDataLocalString
+    ? JSON.parse(savedDataLocalString)
+    : null;
+
+  const savedToken =
+    savedDataLocal?.token === 'null' || !savedDataLocal?.token
+      ? null
+      : savedDataLocal?.token.slice(1, -1);
+
+  axios.defaults.headers.common.Authorization = tokenReceived || savedToken;
+};
+
+const clearAxiosHeader = () => {
+  delete axios.defaults.headers.common.Authorization;
+};
+
+const axiosConfig = {
+  setAxiosBaseURL,
+  setAxiosHeader,
+  clearAxiosHeader,
+};
+
+export const api = axios.create({
+  baseURL: 'https://wallet.b.goit.study/api/',
+});
+
+export const setToken = token => {
+  api.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+export const clearToken = () => {
+  api.defaults.headers.common.Authorization = '';
+};
+export default axiosConfig;
+File: D:\dorin\money_guard_team3\src\redux\currencyApi.js 
+import axios from 'axios';
+
+export const currencyAPI = axios.create({
+  baseURL: `https://openexchangerates.org/api`,
+});
+
+// export const getCurrencyData = async () => {
+//   const { data } = await currencyAPI.get(
+//     '/latest.json?app_id:8b363fd5da974ff799c5f684a0aaa34a'
+//   );
+//   return data;
+// };
+File: D:\dorin\money_guard_team3\src\redux\globalSelectors.js 
+export function selectIsLoading(state) {
+  return state.global.isLoading;
+}
+
+export function selectError(state) {
+  return state.global.error;
+}
+File: D:\dorin\money_guard_team3\src\redux\store.js 
+import { configureStore } from '@reduxjs/toolkit';
+import { authReducer } from './auth/slice';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { globalReducer } from './slices/globalSlice';
+import { transactionsReducer } from '../redux/transactions/slice';
+import { modalsReducer } from './Modals/slice';
+import { currencyReducer } from './currency/slice.js';
+// import { statisticsReducer } from './statistics/slice';
+
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['token'],
+};
+
+const currencyPersistConfig = {
+  key: 'currency',
+  storage,
+};
+
+export const store = configureStore({
+  reducer: {
+    auth: persistReducer(authPersistConfig, authReducer),
+    currency: persistReducer(currencyPersistConfig, currencyReducer),
+    transactions: transactionsReducer,
+    // auth: authReducer,
+    modals: modalsReducer,
+    // statistics: statisticsReducer,
+    global: globalReducer,
+  },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+
+export const persistor = persistStore(store);
+File: D:\dorin\money_guard_team3\src\redux\auth\operations.js 
+import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { api, clearToken, setToken } from '../axiosConfig';
+
+export const registerThunk = createAsyncThunk(
+  'auth/register',
+  async (credentials, thunkAPI) => {
+    try {
+      const { username, password, email } = credentials;
+      const { data } = await api.post('/auth/sign-up', {
+        username,
+        password,
+        email,
+      });
+      setToken(data.token);
+      return data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.response.data.message);
+    }
+  }
+);
+
+export const loginThunk = createAsyncThunk(
+  'auth/login',
+  async (credentials, thunkAPI) => {
+    try {
+      const { data } = await api.post('/auth/sign-in', credentials);
+      setToken(data.token);
+      return data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+export const logoutThunk = createAsyncThunk(
+  'auth/logout',
+  async (_, thunkAPI) => {
+    try {
+      await api.delete('/auth/sign-out');
+      clearToken();
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
+  }
+);
+
+export const refreshUser = createAsyncThunk(
+  'auth/refresh',
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const persistedToken = state.auth.token;
+    try {
+      setToken(persistedToken);
+      const res = await api.get('/users/current');
+      return res.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+export const getUserInfo = createAsyncThunk(
+  'auth/getUserInfo',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get('/api/users/current');
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+File: D:\dorin\money_guard_team3\src\redux\auth\selectors.js 
+export function selectIsLoggedIn(state) {
+  return state.auth.isLoggedIn;
+}
+
+export function selectUserName(state) {
+  return state.auth.user.username
+}
+
+export function selectBalance(state) {
+  return state.auth.user.balance;
+}
+
+export function selectIsRefreshing(state) {
+  return state.auth.isRefreshing;
+}
+File: D:\dorin\money_guard_team3\src\redux\auth\slice.js 
+import { createSlice } from '@reduxjs/toolkit';
+import {
+  loginThunk,
+  logoutThunk,
+  refreshUser,
+  registerThunk,
+} from './operations';
+import { addTransaction } from '../transactions/operations';
+
+const initialState = {
+  user: {
+    id: null,
+    username: null,
+    email: null,
+    balance: 0,
+  },
+  token: null,
+  isLoggedIn: false,
+  isRefreshing: false,
+};
+
+function handleLogIn(state, { payload }) {
+  state.user = payload.user;
+  state.token = payload.token;
+  state.isLoggedIn = true;
+}
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    changeBalanceValue: (state, { payload }) => {
+      state.user.balance = state.user.balance - payload;
+    },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(registerThunk.fulfilled, handleLogIn)
+      .addCase(loginThunk.fulfilled, handleLogIn)
+      .addCase(logoutThunk.fulfilled, state => {
+        state.user = {
+          id: null,
+          username: null,
+          email: null,
+          balance: 0,
+        };
+        state.token = null;
+        state.isLoggedIn = false;
+      })
+      .addCase(refreshUser.pending, state => {
+        state.isRefreshing = true;
+      })
+      .addCase(refreshUser.fulfilled, (state, { payload }) => {
+        state.user = payload;
+        state.isLoggedIn = true;
+        state.isRefreshing = false;
+      })
+      .addCase(refreshUser.rejected, state => {
+        state.isRefreshing = false;
+      })
+      .addCase(addTransaction.fulfilled, (state, { payload }) => {
+        state.user.balance = payload.balanceAfter;
+      });
+  },
+});
+
+export const authReducer = authSlice.reducer;
+export const { changeBalanceValue } = authSlice.actions;
+File: D:\dorin\money_guard_team3\src\redux\currency\operations.js 
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { currencyAPI } from '../../redux/currencyApi';
+
+const currencyID = {
+  usd: 'USD',
+  eur: 'EUR',
+  ron: 'RON',
+};
+
+export const fetchCurrency = createAsyncThunk(
+  'fetchCurrency',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await currencyAPI.get(
+        '/latest.json?app_id=8b363fd5da974ff799c5f684a0aaa34a'
+      );
+
+      // Verificăm dacă datele există
+      if (res.data && res.data.rates) {
+        const rates = res.data.rates;
+
+        const eurToRon = rates['RON'] / rates['EUR'];
+        const usdToRon = rates['RON'] / rates['USD'];
+
+        const result = [
+          {
+            currencyName: currencyID.usd,
+            rateBuy: usdToRon,
+            rateSell: usdToRon + 0.3,
+            currencyCodeA: '840',
+          },
+          {
+            currencyName: currencyID.eur,
+            rateBuy: eurToRon,
+            rateSell: eurToRon + 0.4,
+            currencyCodeA: '978',
+          },
+        ];
+
+        return result;
+      }
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+File: D:\dorin\money_guard_team3\src\redux\currency\selectors.js 
+export const selectCurrency = (state) => state.currency.data;
+export const selectLastUpdatedTime = (state) => state.currency.lastUpdatedTime;
+
+File: D:\dorin\money_guard_team3\src\redux\currency\slice.js 
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchCurrency } from './operations';
+
+const initialState = {
+    data: [],
+    lastUpdatedTime: null,
+};
+
+const currencySlice = createSlice({
+    name: 'currency',
+    initialState,
+    reducers: {
+        setLastUpdatedTime: (state, action) => {
+            state.lastUpdatedTime = action.payload;
+        },
+    },
+    extraReducers: (builder) =>
+        builder.addCase(fetchCurrency.fulfilled, (state, { payload }) => {
+            state.data = payload;
+            state.lastUpdatedTime = new Date().getTime();
+        }),
+});
+
+export const { setLastUpdatedTime } = currencySlice.actions;
+export const currencyReducer = currencySlice.reducer;
+
+
+File: D:\dorin\money_guard_team3\src\redux\Modals\slice.js 
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+  transaction: {
+    transactionDate: '',
+    type: '',
+    categoryId: '',
+    comment: '',
+    amount: 0,
+  },
+
+  isEditModalOpen: false,
+  isAddModalOpen: false,
+  isEditId: '',
+};
+
+const modalsSlice = createSlice({
+  name: 'modals',
+  initialState,
+  selectors: {
+    selectTransaction: state => state.transaction,
+    selectIsEditModalOpen: state => state.isEditModalOpen,
+    selectIsAddModalOpen: state => state.isAddModalOpen,
+    selectIsEditID: state => state.isEditId,
+
+  },
+  reducers: {
+    takeTransactionData: (state, { payload }) => {
+      state.transaction = payload;
+    },
+    openEditModal: state => {
+      state.isEditModalOpen = true;
+    },
+    closeEditModal: state => {
+      state.isEditModalOpen = false;
+      //state = initialState;
+    },
+    openAddModal: state => {
+      state.isAddModalOpen = true;
+    },
+    closeAddModal: state => {
+      state.isAddModalOpen = false;
+      //state = initialState;
+    },
+    addEditId: (state, { payload }) => {
+      state.isEditId = payload;
+    },
+  },
+});
+
+export const modalsReducer = modalsSlice.reducer;
+export const {
+  takeTransactionData,
+  openEditModal,
+  closeEditModal,
+  openAddModal,
+  closeAddModal,
+  addEditId,
+} = modalsSlice.actions;
+export const {
+  selectTransaction,
+  selectIsEditModalOpen,
+  selectIsAddModalOpen,
+  selectIsEditID,
+
+} = modalsSlice.selectors;
+File: D:\dorin\money_guard_team3\src\redux\slices\globalSlice.js 
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchCurrency } from '../currency/operations';
+import { fetchTransSumThunk } from '../statistics/operations';
+import {
+  addTransaction,
+  fetchAllTransactions,
+  deleteTransaction,
+  //   getTransactionsCategories,
+} from '../transactions/operations';
+
+const initialState = {
+  isLoading: false,
+  error: null,
+};
+
+function handlePending(state) {
+  state.isLoading = true;
+}
+
+function handleFulfilled(state) {
+  state.isLoading = false;
+  state.error = null;
+}
+
+function handleRejected(state, action) {
+  state.isLoading = false;
+  state.error = action.payload;
+}
+
+const slice = createSlice({
+  name: 'global',
+  initialState,
+  extraReducers: builder => {
+    builder
+      .addCase(fetchCurrency.fulfilled, handleFulfilled)
+      .addCase(fetchCurrency.pending, handlePending)
+      .addCase(fetchCurrency.rejected, handleRejected)
+
+      .addCase(fetchTransSumThunk.pending, handlePending)
+      .addCase(fetchTransSumThunk.fulfilled, handleFulfilled)
+      .addCase(fetchTransSumThunk.rejected, handleRejected)
+
+      //   .addCase(getTransactionsCategories.pending, handlePending)
+      //   .addCase(getTransactionsCategories.fulfilled, handleFulfilled)
+      //   .addCase(getTransactionsCategories.rejected, handleRejected)
+
+      .addCase(addTransaction.pending, handlePending)
+      .addCase(addTransaction.fulfilled, handleFulfilled)
+      .addCase(addTransaction.rejected, handleRejected)
+
+      .addCase(fetchAllTransactions.pending, handlePending)
+      .addCase(fetchAllTransactions.fulfilled, handleFulfilled)
+      .addCase(fetchAllTransactions.rejected, handleRejected)
+
+      .addCase(deleteTransaction.pending, handlePending)
+      .addCase(deleteTransaction.fulfilled, handleFulfilled)
+      .addCase(deleteTransaction.rejected, handleRejected);
+  },
+});
+
+export const globalReducer = slice.reducer;
+File: D:\dorin\money_guard_team3\src\redux\statistics\operations.js 
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { api, setToken } from '../axiosConfig';
+
+export const fetchTransSumThunk = createAsyncThunk(
+  'fetchTransSum',
+  async (params, thunkApi) => {
+    const savedToken = thunkApi.getState().auth.token;
+    if (savedToken) {
+      setToken(savedToken);
+    } else {
+      return thunkApi.rejectWithValue('User is not authorized');
+    }
+    try {
+      const { data } = await api.get('/transactions-summary', {
+        params: {
+          ...(params?.month !== undefined && { month: params.month }),
+          ...(params?.year !== undefined && { year: params.year }),
+        },
+      });
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+File: D:\dorin\money_guard_team3\src\redux\statistics\selectors.js 
+export function selectSummary(state) {
+  return state.statistics.summary;
+}
+File: D:\dorin\money_guard_team3\src\redux\statistics\slice.js 
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchTransSumThunk } from './operations';
+
+const initialState = {
+  summary: [],
+};
+
+const slice = createSlice({
+  name: 'statistics',
+  initialState,
+  extraReducers: builder => {
+    builder.addCase(fetchTransSumThunk.fulfilled, (state, { payload }) => {
+      state.summary = payload;
+    });
+  },
+});
+
+export const statisticsReducer = slice.reducer;
+File: D:\dorin\money_guard_team3\src\redux\transactions\operations.js 
+import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axiosConfig from '../axiosConfig';
+import { toast } from 'react-toastify';
+
+// Configurăm axios
+axiosConfig.setAxiosBaseURL();
+axiosConfig.setAxiosHeader();
+
+// *Adaugă tranzacție //
+const addTransaction = createAsyncThunk(
+  'transactions/addTransaction',
+  async (transactionData, thunkAPI) => {
+    try {
+      const response = await axios.post('/api/transactions', transactionData);
+      toast.success('Transaction added successfully!');
+      return response.data;
+    } catch (error) {
+      const errorNotify =
+        error.response?.data?.message ||
+        'Operation failed, transaction not saved. We are facing some technical problems with our servers!';
+      toast.error(errorNotify);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// *Obține toate tranzacțiile //
+const fetchAllTransactions = createAsyncThunk(
+  'transactions/fetchAllTransaction',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get('/api/transactions');
+      return response.data;
+    } catch (error) {
+      const errorNotify =
+        error.response?.data?.message ||
+        'Operation failed, transaction not saved. We are facing some technical problems with our servers!';
+      toast.error(errorNotify);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// *Șterge tranzacție //
+const deleteTransaction = createAsyncThunk(
+  'transactions/deleteTransaction',
+  async (transactionId, thunkAPI) => {
+    try {
+      await axios.delete(`/api/transactions/${transactionId}`);
+      toast.success('Transaction deleted successfully!');
+      return transactionId;
+    } catch (error) {
+      const errorNotify =
+        error.response?.data?.message ||
+        'Operation failed, transaction not deleted. We are facing some technical problems with our servers!';
+      toast.error(errorNotify);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// *Modifică tranzacție //
+const modifyTransaction = createAsyncThunk(
+  'transactions/modifyTransaction',
+  async ({ transactionId, transactionData }, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `/api/transactions/${transactionId}`,
+        transactionData
+      );
+      toast.success('Transaction modified successfully!');
+      return response.data;
+    } catch (error) {
+      const errorNotify =
+        error.response?.data?.message ||
+        'Operation failed, transaction not modified. We are facing some technical problems with our servers!';
+      toast.error(errorNotify);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// *Obține rezumatul tranzacțiilor //
+const fetchTransactionsSummary = createAsyncThunk(
+  'transactions/fetchTransactionsSummary',
+  async ({ month, year }, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `/api/transactions-summary?month=${month}&year=${year}`
+      );
+      return response.data;
+    } catch (error) {
+      const errorNotify =
+        error.response?.data?.message ||
+        'Operation failed and transaction summary not fetched. We are facing some technical problems with our servers!';
+      toast.error(errorNotify);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+// *Obține categoriile tranzacțiilor //
+// const getTransactionsCategories = createAsyncThunk(
+//   'transactions/getTransactionsCategories',
+//   async (_, thunkAPI) => {
+//     try {
+//       const response = await axios.get('/transactions/categories');
+//       return response.data;
+//     } catch (error) {
+//       const errorNotify =
+//         error.response?.data?.message ||
+//         'Operation failed and transaction categories not fetched. We are facing some technical problems with our servers!';
+//       toast.error(errorNotify);
+//       return thunkAPI.rejectWithValue(error.message);
+//     }
+//   }
+// );
+
+export {
+  fetchAllTransactions,
+  addTransaction,
+  deleteTransaction,
+  fetchTransactionsSummary,
+  modifyTransaction,
+  // getTransactionsCategories,
+};
+File: D:\dorin\money_guard_team3\src\redux\transactions\selectors.js 
+import { createSelector } from '@reduxjs/toolkit';
+
+const selectAllTransactions = state => state.transactions.items;
+
+const selectTransactionsSummary = state => state.transactions.summary;
+
+const selectCategoriesSummary = state =>
+  state.transactions.summary?.categoriesSummary;
+
+const selectFilteredCategories = createSelector(
+  [selectCategoriesSummary],
+  categoriesSummary => {
+    return categoriesSummary?.filter(item => item.name !== 'Income');
+  }
+);
+
+const selectTrasactionIdForDelete = state =>
+  state.transactions.trasactionIdForDelete;
+
+const selectTransactionForUpdate = state =>
+  state.transactions.transactionForUpdate;
+
+const selectIsLoading = state => state.transactions.isLoading;
+
+export {
+  selectAllTransactions,
+  selectTransactionsSummary,
+  selectTrasactionIdForDelete,
+  selectTransactionForUpdate,
+  selectFilteredCategories,
+  selectIsLoading,
+};
+File: D:\dorin\money_guard_team3\src\redux\transactions\slice.js 
+import { createSlice } from '@reduxjs/toolkit';
+
+import {
+  addTransaction,
+  deleteTransaction,
+  fetchAllTransactions,
+  fetchTransactionsSummary,
+  modifyTransaction,
+} from './operations';
+
+const initialState = {
+  categories: [],
+  items: [],
+  isLoading: false,
+  error: null,
+  summary: [],
+  trasactionIdForDelete: '',
+  transactionForUpdate: {
+    id: '',
+    type: '',
+  },
+};
+
+const transactionsSlice = createSlice({
+  name: 'transactions',
+  initialState,
+  reducers: {
+    setTrasactionIdForDelete: (state, action) => {
+      state.trasactionIdForDelete = action.payload;
+    },
+    setTrasactionForUpdate: (state, action) => {
+      state.transactionForUpdate = action.payload;
+    },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(addTransaction.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(addTransaction.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(addTransaction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items.push(action.payload);
+      })
+      .addCase(deleteTransaction.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(deleteTransaction.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteTransaction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        const index = state.items.findIndex(el => el.id === action.payload);
+        state.items.splice(index, 1);
+      })
+      .addCase(modifyTransaction.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(modifyTransaction.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(modifyTransaction.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        const index = state.items.findIndex(el => el.id === action.payload.id);
+        state.items.splice(index, 1, action.payload);
+      })
+      .addCase(fetchAllTransactions.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchAllTransactions.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchAllTransactions.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.items = action.payload;
+      })
+      .addCase(fetchTransactionsSummary.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchTransactionsSummary.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchTransactionsSummary.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.summary = action.payload;
+      });
+  },
+});
+
+export const { setTrasactionIdForDelete, setTrasactionForUpdate } =
+  transactionsSlice.actions;
+
+export const transactionsReducer = transactionsSlice.reducer;
+File: D:\dorin\money_guard_team3\src\routes\PrivateRoute.jsx 
+import { Navigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedIn, selectIsRefreshing } from '../redux/auth/selectors';
+
+export const PrivateRoute = ({ component, redirectTo = '/dashboard' }) => {
+  const location = useLocation();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const isRefreshing = useSelector(selectIsRefreshing);
+  const shouldRedirect = !isLoggedIn && !isRefreshing;
+
+  return shouldRedirect ? (
+    <Navigate to={redirectTo} state={{ from: location }} />
+  ) : (
+    component
+  );
+};
+File: D:\dorin\money_guard_team3\src\routes\RestrictedRoute.jsx 
+import { Navigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsLoggedIn } from '../redux/auth/selectors';
+
+export const RestrictedRoute = ({ component, redirectTo = '/dashboard' }) => {
+  const location = useLocation();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  console.log(isLoggedIn, location.state?.from);
+
+  return isLoggedIn ? (
+    <Navigate to={location.state?.from ? location.state?.from : redirectTo} />
+  ) : (
+    component
+  );
+};

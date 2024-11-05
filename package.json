@@ -33,6 +33,7 @@
     "recharts": "^2.13.0",
     "redux-persist": "^6.0.0",
     "sass": "^1.80.5",
+    "styled-components": "^6.1.13",
     "yup": "^1.4.0"
   },
   "scripts": {
@@ -53,8 +54,10 @@
     "url": "https://github.com/DorinGI/money_guard_team3/issues"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@parcel/transformer-sass": "^2.6.0",
     "buffer": "^6.0.3",
+    "eslint-config-react-app": "^7.0.1",
     "parcel": "^2.6.0",
     "parcel-reporter-clean-dist": "^1.0.4",
     "posthtml-include": "^1.7.4",
