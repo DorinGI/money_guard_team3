@@ -1,34 +1,18 @@
-import React from 'react';
 import TransactionItem from './TransactionItem';
-import styles from './TransactionList.module.css';
+import styles from './TransactionsList.module.css';
 
-const TransactionsList = ({ transactions = [] }) => {
+const TransactionsList = ({ data, openDeleteModal, openEditModal }) => {
   return (
-    <table className={styles.transactionsContainer}>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Category</th>
-          <th>Comment</th>
-          <th>Sum</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.length > 0 ? (
-          transactions.map(transaction => (
-            <TransactionItem key={transaction.id} transaction={transaction} />
-          ))
-        ) : (
-          <tr>
-            <td colSpan="6" className={styles.noTransactions}>
-              No transactions available.
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+    <ul className={styles.TransactionList}>
+      {data.map(item => (
+        <TransactionItem
+          key={item.id}
+          transaction={item}
+          openDeleteModal={openDeleteModal}
+          openEditModal={openEditModal}
+        />
+      ))}
+    </ul>
   );
 };
 

@@ -99,4 +99,7 @@ const transactionsSlice = createSlice({
   },
 });
 
+export const { setTrasactionIdForDelete, setTrasactionForUpdate } =
+  transactionsSlice.actions;
+
 export const transactionsReducer = transactionsSlice.reducer;

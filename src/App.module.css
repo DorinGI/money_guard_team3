@@ -1,9 +1,17 @@
+@import './sass/_common.scss';
+
 /*pentru mobil*/
+.section {
+  overflow: clip;
+  min-height: 100vh;
+  background-image: url(/src/images/backgrounds/mainGradient.webp);
+  background-position: center top;
+}
 .mainContainer {
   display: flex;
   max-width: 1280px;
   padding: 0px 16px;
-  background: #623f8b;
+  /* background: #623f8b; */
   margin: auto;
   height: 100%;
 }

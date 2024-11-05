@@ -1,4 +1,6 @@
+@import '../../../../sass/_common.scss';
+
 .loadingSpinner {
-    display: flex;
-    justify-content:center;
+  display: flex;
+  justify-content: center;
 }

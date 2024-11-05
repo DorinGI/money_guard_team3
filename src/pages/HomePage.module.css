@@ -1,52 +1,27 @@
-.homePage {
-  padding: 16px;
-  background: linear-gradient(to bottom, #4B1E7C 19%, #302E8E 100%);
-}
+@import '../sass/_common.scss';
 
-
-/*
-
-.table {
+.HomePage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-
-.table td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
+@media screen and (min-width: 768px) {
+  .HomePage {
+    width: 100%;
+  }
 }
 
-.table th {
-  padding: 12px;
-  background-color: #523b7e;
-  color: white;
-  text-align: left;
-  border-radius: 5px;
-}
+@media screen and (min-width: 1280px) {
+  .HomePage {
+    display: inline-flex;
+    justify-content: center;
+    align-self: flex-start;
 
-.table td {
-  color: #333;
+    margin-left: 64px;
+    margin-top: 0;
+  }
 }
-
-/*.addButton {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: linear-gradient(to bottom, #FFC727 0%, #9E40BA 61%, #7000FF 91%);
-
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.addButton:hover {
-  background-color: #FFC727;
-}
-*/

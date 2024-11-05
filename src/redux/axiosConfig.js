@@ -1,19 +1,18 @@
-import axios from "axios";
+import axios from 'axios';
 
 const setAxiosBaseURL = () => {
-  axios.defaults.baseURL = "https://wallet.b.goit.study/docs/";
+  axios.defaults.baseURL = 'https://wallet.b.goit.study/';
 };
 
-const setAxiosHeader = (tokenReceived) => {
-  const savedDataLocalString = localStorage.getItem("persist:auth");
+const setAxiosHeader = tokenReceived => {
+  const savedDataLocalString = localStorage.getItem('persist:auth');
 
- 
   const savedDataLocal = savedDataLocalString
     ? JSON.parse(savedDataLocalString)
     : null;
 
   const savedToken =
-    savedDataLocal?.token === "null" || !savedDataLocal?.token
+    savedDataLocal?.token === 'null' || !savedDataLocal?.token
       ? null
       : savedDataLocal?.token.slice(1, -1);
 
@@ -30,4 +29,14 @@ const axiosConfig = {
   clearAxiosHeader,
 };
 
+export const api = axios.create({
+  baseURL: 'https://wallet.b.goit.study/api/',
+});
+
+export const setToken = token => {
+  api.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+export const clearToken = () => {
+  api.defaults.headers.common.Authorization = '';
+};
 export default axiosConfig;
