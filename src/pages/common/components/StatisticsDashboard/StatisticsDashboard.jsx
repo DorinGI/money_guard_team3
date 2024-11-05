@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./StatisticsDashboard.module.css";
 import { useDispatch } from "react-redux";
-import {
-  Months_OPTIONS,
-  YEARS_OPTIONS,
-} from "../TransactionConstants";
+import { Months_OPTIONS, YEARS_OPTIONS } from "../TransactionConstants";
 import { fetchTransactionsSummary } from "../../../../redux/transactions/operations";
 
 const StatisticsDashboard = () => {
@@ -12,39 +9,31 @@ const StatisticsDashboard = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
-  const monthRef = useRef();
-  const yearRef = useRef();
-
+  // Efect pentru a aduce datele când luna sau anul se schimbă
   useEffect(() => {
     dispatch(
       fetchTransactionsSummary({
-        month: monthRef.current.value,
-        year: yearRef.current.value,
+        month: currentMonth,
+        year: currentYear,
       })
     );
   }, [currentMonth, currentYear, dispatch]);
 
-  useEffect(() => {
-    monthRef.current.value = currentMonth;
-  }, [currentMonth]);
-
   return (
     <div className={styles.dropdownsWrapper}>
       <select
-        onChange={() => setCurrentMonth(parseInt(monthRef.current.value))}
-        ref={monthRef}
+        value={currentMonth}
+        onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
       >
         {Months_OPTIONS.map((item) => (
-          <option
-            key={item.value}
-            value={item.value}
-            label={item.label}
-          ></option>
+          <option key={item.value} value={item.value}>
+            {item.label}
+          </option>
         ))}
       </select>
       <select
-        onChange={() => setCurrentYear(parseInt(yearRef.current.value))}
-        ref={yearRef}
+        value={currentYear}
+        onChange={(e) => setCurrentYear(parseInt(e.target.value))}
       >
         {YEARS_OPTIONS.map((item) => (
           <option key={item} value={item}>
