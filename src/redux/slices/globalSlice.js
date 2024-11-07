@@ -3,9 +3,8 @@ import { fetchCurrency } from '../currency/operations';
 import { fetchTransSumThunk } from '../statistics/operations';
 import {
   addTransaction,
-  fetchAllTransactions,
+  // fetchAllTransactions,
   deleteTransaction,
-  //   getTransactionsCategories,
 } from '../transactions/operations';
 
 const initialState = {
@@ -40,17 +39,13 @@ const slice = createSlice({
       .addCase(fetchTransSumThunk.fulfilled, handleFulfilled)
       .addCase(fetchTransSumThunk.rejected, handleRejected)
 
-      //   .addCase(getTransactionsCategories.pending, handlePending)
-      //   .addCase(getTransactionsCategories.fulfilled, handleFulfilled)
-      //   .addCase(getTransactionsCategories.rejected, handleRejected)
-
       .addCase(addTransaction.pending, handlePending)
       .addCase(addTransaction.fulfilled, handleFulfilled)
       .addCase(addTransaction.rejected, handleRejected)
 
-      .addCase(fetchAllTransactions.pending, handlePending)
-      .addCase(fetchAllTransactions.fulfilled, handleFulfilled)
-      .addCase(fetchAllTransactions.rejected, handleRejected)
+      // .addCase(fetchAllTransactions.pending, handlePending)
+      // .addCase(fetchAllTransactions.fulfilled, handleFulfilled)
+      // .addCase(fetchAllTransactions.rejected, handleRejected)
 
       .addCase(deleteTransaction.pending, handlePending)
       .addCase(deleteTransaction.fulfilled, handleFulfilled)

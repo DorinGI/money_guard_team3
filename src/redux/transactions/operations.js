@@ -100,28 +100,10 @@ const fetchTransactionsSummary = createAsyncThunk(
   }
 );
 
-// *Obține categoriile tranzacțiilor //
-// const getTransactionsCategories = createAsyncThunk(
-//   'transactions/getTransactionsCategories',
-//   async (_, thunkAPI) => {
-//     try {
-//       const response = await axios.get('/transactions/categories');
-//       return response.data;
-//     } catch (error) {
-//       const errorNotify =
-//         error.response?.data?.message ||
-//         'Operation failed and transaction categories not fetched. We are facing some technical problems with our servers!';
-//       toast.error(errorNotify);
-//       return thunkAPI.rejectWithValue(error.message);
-//     }
-//   }
-// );
-
 export {
   fetchAllTransactions,
   addTransaction,
   deleteTransaction,
   fetchTransactionsSummary,
   modifyTransaction,
-  // getTransactionsCategories,
 };

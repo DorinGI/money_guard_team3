@@ -33,9 +33,7 @@ export const store = configureStore({
     auth: persistReducer(authPersistConfig, authReducer),
     currency: persistReducer(currencyPersistConfig, currencyReducer),
     transactions: transactionsReducer,
-    // auth: authReducer,
     modals: modalsReducer,
-    // statistics: statisticsReducer,
     global: globalReducer,
   },
   middleware: getDefaultMiddleware =>

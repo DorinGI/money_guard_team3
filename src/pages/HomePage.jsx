@@ -23,9 +23,12 @@ import LoadingSpinner from '../pages/common/components/LoadingSpinner/LoadingSpi
 
 const HomePage = () => {
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
 
   useEffect(() => {
-    dispatch(fetchAllTransactions());
+    if (isLoggedIn) {
+      dispatch(fetchAllTransactions());
+    }
   }, [dispatch]);
 
   const data = useSelector(selectAllTransactions);

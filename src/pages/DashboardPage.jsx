@@ -16,15 +16,12 @@ import {
 } from './DashboardPage.styled';
 import { useMediaQuery } from 'react-responsive';
 import CurrencyPage from './CurrencyPage';
-import { useDispatch } from 'react-redux';
-import {
-  fetchAllTransactions,
-  // getTransactionsCategories,
-} from '../redux/transactions/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllTransactions } from '../redux/transactions/operations';
 
 function DashboardPage() {
   const dispatch = useDispatch();
-
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   const isTabletOrDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const location = useLocation();
   const currentPage = location.pathname
@@ -32,8 +29,9 @@ function DashboardPage() {
     .replaceAll('/', '');
 
   useEffect(() => {
-    // dispatch(getTransactionsCategories());
-    dispatch(fetchAllTransactions());
+    if (isLoggedIn) {
+      dispatch(fetchAllTransactions());
+    }
   }, [dispatch]);
 
   return (
