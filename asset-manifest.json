@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/money_guard_team3/static/css/main.99ed1e58.css",
-    "main.js": "/money_guard_team3/static/js/main.2310867f.js",
+    "main.js": "/money_guard_team3/static/js/main.542dde66.js",
     "static/media/gradient.webp": "/money_guard_team3/static/media/gradient.97f7d926370def36c1c7.webp",
     "static/media/desctopRegister.webp": "/money_guard_team3/static/media/desctopRegister.4d04a4a93eccc2beb204.webp",
     "static/media/tabletRegistr.webp": "/money_guard_team3/static/media/tabletRegistr.a07821c01d71a9c6800b.webp",
@@ -13,10 +13,10 @@
     "static/media/mobileRegistr.webp": "/money_guard_team3/static/media/mobileRegistr.cd96492ed450e20db6d0.webp",
     "index.html": "/money_guard_team3/index.html",
     "main.99ed1e58.css.map": "/money_guard_team3/static/css/main.99ed1e58.css.map",
-    "main.2310867f.js.map": "/money_guard_team3/static/js/main.2310867f.js.map"
+    "main.542dde66.js.map": "/money_guard_team3/static/js/main.542dde66.js.map"
   },
   "entrypoints": [
     "static/css/main.99ed1e58.css",
-    "static/js/main.2310867f.js"
+    "static/js/main.542dde66.js"
   ]
 }
